@@ -54,7 +54,7 @@ export const HomeScreen = ({ user, posts, stories, onNavigate, onCreatePost, onL
             margin: 0,
             lineHeight: '1.4'
           }}>
-            No feeds to display
+            This is a preview. The experience lives in the app
           </p>
           
           <p style={{
@@ -64,7 +64,7 @@ export const HomeScreen = ({ user, posts, stories, onNavigate, onCreatePost, onL
             margin: 0,
             lineHeight: '1.5'
           }}>
-            Dicover something new or explore what Auri has to offer
+            Join us. Experience something new with Auri. Only available on Android... for now.
           </p>
         </div>
 
