@@ -195,7 +195,6 @@ const ProfileScreen = ({ user, onNavigate }) => {
                 className={`preview-profile-tab ${isActive ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab.key)}
               >
-                <Icon size={18} />
                 <span>{tab.label}</span>
               </button>
             );
