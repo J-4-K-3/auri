@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import '../styles/Download.css';
 import DownloadModal from './DownloadModal';
 
@@ -103,17 +104,32 @@ export const Download = () => {
           </div>
         </motion.div>
 
-        <motion.button
-          className="download-btn-large"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          onClick={() => setModalOpen(true)}
-        >
-          Download APK
-        </motion.button>
+        <div className="button-group">
+          <motion.button
+            className="download-btn-large"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            onClick={() => setModalOpen(true)}
+          >
+            Download APK
+          </motion.button>
+          
+          <Link to="/preview">
+            <motion.button
+              className="preview-btn-large"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Preview App
+            </motion.button>
+          </Link>
+        </div>
 
         <DownloadModal
           isOpen={modalOpen}

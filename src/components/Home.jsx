@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 import DownloadModal from './DownloadModal';
 import { useState } from 'react';
 
 export const Home = () => {
-   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -60,15 +61,28 @@ export const Home = () => {
           <p>Experience new emojis in-app</p>
         </motion.div>
 
-        <motion.button
-          className="download-btn"
-          variants={itemVariants}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setModalOpen(true)}
-        >
-          Download APK
-        </motion.button>
+        <div className="button-group">
+          <motion.button
+            className="download-btn"
+            variants={itemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setModalOpen(true)}
+          >
+            Download APK
+          </motion.button>
+          
+          <Link to="/preview">
+            <motion.button
+              className="preview-btn"
+              variants={itemVariants}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Preview App
+            </motion.button>
+          </Link>
+        </div>
 
         <DownloadModal
           isOpen={modalOpen}

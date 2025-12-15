@@ -6,6 +6,10 @@ export const appwriteConfig = {
   projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID,
 };
 
+
+
+
+
 const client = new Client()
   .setEndpoint(appwriteConfig.endpoint)
   .setProject(appwriteConfig.projectId);
@@ -387,6 +391,7 @@ export const logoutUser = async () => {
   return await logoutCurrent();
 };
 
+
 /**
  * Restore session from localStorage if available
  */
@@ -407,6 +412,293 @@ export const restoreSession = async () => {
   } catch (error) {
     console.error('Error restoring session:', error);
     return null;
+  }
+};
+
+// ============================================
+// SANITIZATION HELPERS (for profile creation)
+// ============================================
+
+const sanitizeStringArray = (value, maxItems, itemMaxLength) => {
+  if (!Array.isArray(value) || maxItems <= 0) {
+    return [];
+  }
+
+  const unique = [];
+  value.forEach((item) => {
+    if (typeof item !== 'string') {
+      return;
+    }
+    const sanitized = sanitizeString(item, itemMaxLength);
+    if (!sanitized) {
+      return;
+    }
+    if (!unique.includes(sanitized)) {
+      unique.push(sanitized);
+    }
+  });
+
+  return unique.slice(0, maxItems);
+};
+
+const sanitizeLink = (value, maxLength = 280) => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  return maxLength ? trimmed.slice(0, maxLength) : trimmed;
+};
+
+const sanitizeAge = (value) => {
+  const parsed = Number(value);
+  if (Number.isFinite(parsed)) {
+    const clamped = Math.max(13, Math.min(parsed, 120));
+    return Math.round(clamped);
+  }
+  return undefined;
+};
+
+const sanitizeProfilePayload = (userId, profileData = {}) => {
+  const email = sanitizeString(profileData.email, 320);
+  const name = sanitizeString(profileData.name, 255, 'Auri User');
+  const bio = sanitizeString(profileData.bio, 150);
+  const city = sanitizeString(profileData.city ?? profileData.location, 100);
+  const status = sanitizeString(profileData.status, 150);
+  const location = sanitizeString(profileData.location, 100);
+  const age = sanitizeAge(profileData.age);
+  const interests = sanitizeStringArray(profileData.interests, 20, 60);
+  const active = profileData.active ?? true;
+  const archived = profileData.archived ?? false;
+
+  const payload = {
+    userId,
+    name,
+    email,
+    bio,
+    city,
+    status,
+    interests,
+    active: Boolean(active),
+    archived: Boolean(archived),
+  };
+
+  const originalAvatarUri =
+    typeof profileData.avatarUri === 'string' ? profileData.avatarUri.trim() : '';
+  if (originalAvatarUri) {
+    const sanitizedFullAvatar = sanitizeString(
+      originalAvatarUri,
+      2048,
+      String(originalAvatarUri)
+    );
+    payload.avatarUri = sanitizedFullAvatar || String(originalAvatarUri);
+  }
+
+  const incomingLinks = profileData.links;
+  if (incomingLinks && typeof incomingLinks === 'object') {
+    const sanitizedLinks = {};
+    const website = sanitizeLink(incomingLinks.website);
+    if (website) {
+      sanitizedLinks.website = website;
+    }
+    const donation = sanitizeLink(incomingLinks.donation);
+    if (donation) {
+      sanitizedLinks.donation = donation;
+    }
+    const knownLinkKeys = ['website', 'donation'].some((key) =>
+      Object.prototype.hasOwnProperty.call(incomingLinks, key)
+    );
+    if (Object.keys(sanitizedLinks).length > 0 || knownLinkKeys) {
+      let serialized = '';
+      if (Object.keys(sanitizedLinks).length > 0) {
+        serialized = JSON.stringify(sanitizedLinks);
+        if (serialized.length > 300 && sanitizedLinks.donation) {
+          serialized = JSON.stringify({
+            donation: sanitizedLinks.donation.slice(0, 260),
+          });
+        }
+        if (serialized.length > 300) {
+          serialized = '';
+        }
+      }
+      payload.links = serialized;
+    }
+  } else if (
+    typeof incomingLinks === 'string' &&
+    incomingLinks.trim().length > 0
+  ) {
+    // Allow callers to pass sanitized string directly
+    payload.links = incomingLinks.trim().slice(0, 300);
+  }
+
+  if (typeof location === 'string' && location.length) {
+    payload.location = location;
+  }
+
+  if (typeof age === 'number') {
+    payload.age = age;
+  }
+
+  return payload;
+};
+
+/**
+ * Safe upsert user profile: Try create with permissions, fallback to update
+ * Mirrors mobile safeUpsertUserProfile behavior
+ */
+export const safeUpsertUserProfile = async (userId, profileData) => {
+  if (!userId) {
+    throw new Error('Missing user identifier while saving profile.');
+  }
+
+  const payload = sanitizeProfilePayload(userId, profileData);
+  const creationPermissions = [
+    Permission.read(Role.user(userId)), // Only that user can read
+    Permission.update(Role.user(userId)), // Only that user can update
+    Permission.delete(Role.user(userId)), // Only that user can delete
+  ];
+
+  let encounteredUnauthorized = false;
+  let createConflict = false;
+
+  const tryUpdateDocument = async (documentId) => {
+    if (!documentId) {
+      return null;
+    }
+
+    try {
+      return await databases.updateDocument(
+        APPWRITE_DATABASE_ID,
+        COLLECTION_USERS_ID,
+        documentId,
+        payload
+      );
+    } catch (updateError) {
+      const code = updateError?.code ?? updateError?.response?.code;
+      if (code === 401 || code === 403) {
+        encounteredUnauthorized = true;
+        console.warn('safeUpsertUserProfile:update unauthorized', updateError);
+        return null;
+      }
+      if (code === 1008) {
+        encounteredUnauthorized = true;
+        console.warn('safeUpsertUserProfile:update server error fallback', updateError);
+        return null;
+      }
+      if (code === 404) {
+        return null;
+      }
+
+      const message = String(
+        updateError?.message ?? updateError?.response?.message ?? ''
+      );
+      if (message.includes('Permissions must be one of')) {
+        console.warn('safeUpsertUserProfile:update permissions fallback', updateError);
+        return null;
+      }
+
+      throw new Error(formatAppwriteError(updateError, 'Unable to update profile.'));
+    }
+  };
+
+  const resolveExistingDocumentId = async () => {
+    try {
+      const response = await databases.listDocuments(
+        APPWRITE_DATABASE_ID,
+        COLLECTION_USERS_ID,
+        [Query.equal('userId', userId), Query.orderDesc('$updatedAt'), Query.limit(1)]
+      );
+
+      const candidate = response?.documents?.[0];
+      if (candidate?.$id) {
+        return candidate.$id;
+      }
+      if (candidate?.id) {
+        return candidate.id;
+      }
+    } catch (lookupError) {
+      console.warn('safeUpsertUserProfile:lookup', lookupError);
+    }
+    return null;
+  };
+
+  const updatedByRequestedId = await tryUpdateDocument(userId);
+  if (updatedByRequestedId) {
+    return updatedByRequestedId;
+  }
+
+  let existingDocumentId = await resolveExistingDocumentId();
+  if (existingDocumentId && existingDocumentId !== userId) {
+    const updatedByLookup = await tryUpdateDocument(existingDocumentId);
+    if (updatedByLookup) {
+      return updatedByLookup;
+    }
+  }
+
+  try {
+    return await databases.createDocument(
+      APPWRITE_DATABASE_ID,
+      COLLECTION_USERS_ID,
+      userId,
+      payload,
+      creationPermissions
+    );
+  } catch (error) {
+    const code = error?.code ?? error?.response?.code;
+    const message = String(error?.message ?? error?.response?.message ?? '');
+    const isConflict =
+      code === 409 ||
+      error?.type === 'document_already_exists' ||
+      /already exists/i.test(message);
+
+    if (isConflict) {
+      createConflict = true;
+      if (!existingDocumentId) {
+        existingDocumentId = await resolveExistingDocumentId();
+      }
+      const updatedAfterConflict = await tryUpdateDocument(existingDocumentId || userId);
+      if (updatedAfterConflict) {
+        return updatedAfterConflict;
+      }
+      if (encounteredUnauthorized) {
+        const fallbackDocId = IDs.unique();
+        try {
+          return await databases.createDocument(
+            APPWRITE_DATABASE_ID,
+            COLLECTION_USERS_ID,
+            fallbackDocId,
+            payload,
+            creationPermissions
+          );
+        } catch (fallbackCreateError) {
+          const fallbackCode =
+            fallbackCreateError?.code ?? fallbackCreateError?.response?.code;
+          if (fallbackCode === 409) {
+            throw new Error(
+              "We couldn't update your profile because of conflicting records. Please contact support."
+            );
+          }
+          throw new Error(
+            formatAppwriteError(
+              fallbackCreateError,
+              'Unable to finalize profile save. Please retry shortly.'
+            )
+          );
+        }
+      }
+    }
+
+    if (encounteredUnauthorized && !createConflict) {
+      throw new Error(
+        "We couldn't update this profile yet because of access settings. Please retry after refreshing."
+      );
+    }
+
+    throw new Error(formatAppwriteError(error, 'Unable to save profile.'));
   }
 };
 

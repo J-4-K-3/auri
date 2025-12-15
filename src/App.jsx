@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet';
+
 import { LoadingScreen } from './components/LoadingScreen';
 import { Home } from './components/Home';
 import { About } from './components/About';
@@ -10,11 +12,44 @@ import { Reviews } from './components/Reviews';
 import { Terms } from './components/Terms';
 import { Footer } from './components/Footer';
 import { Navigation } from './components/Navigation';
+import { AppNavigation } from './preview/AppNavigation';
 import { databases, APPWRITE_DATABASE_ID, IDs, COLLECTION_TRACKER_ID } from './lib/Appwrite';
 import './styles/globals.css';
 import './App.css';
 
+
 const SITE_URL = 'https://auri-green.vercel.app';
+
+// Component to handle conditional layout rendering
+function AppLayout() {
+  const location = useLocation();
+  
+  // If we're on the preview route, render a clean white canvas
+  if (location.pathname === '/preview') {
+    return (
+      <div>
+        <AppNavigation />
+      </div>
+    );
+  }
+  
+  // For all other routes, render the normal app layout
+  return (
+    <div className="app-layout">
+      <Navigation />
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/download" element={<Download />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/terms" element={<Terms />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 // OS detection function
 function getOS() {
@@ -115,24 +150,13 @@ function App() {
         <meta name="twitter:image" content={`${SITE_URL}/auri_logo.png`} />
       </Helmet>
 
+
       <AnimatePresence mode="wait">
         {isLoading ? (
           <LoadingScreen key="loading" onLoadingComplete={handleLoadingComplete} />
         ) : (
           <Router>
-            <div className="app-layout">
-              <Navigation />
-              <main className="app-main">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/download" element={<Download />} />
-                  <Route path="/reviews" element={<Reviews />} />
-                  <Route path="/terms" element={<Terms />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
+            <AppLayout />
           </Router>
         )}
       </AnimatePresence>
