@@ -38,7 +38,7 @@ export const DownloadModal = ({ isOpen, onClose, downloadUrl }) => {
           >
             <h2 id="dm-title">Download Auri APK</h2>
             <p className="dm-message">
-              You'll be directed to APKPure, an online app store.
+              You'll be directed to App On The Go, our apk host.
             </p>
 
             <div className="dm-quote">
@@ -46,7 +46,7 @@ export const DownloadModal = ({ isOpen, onClose, downloadUrl }) => {
             </div>
 
             <p className="dm-message">
-              APKPure is a verified, trusted host for all app distribution.
+              App On The Go is a verified, trusted and secure host for all app distribution.
             </p>
 
             <div className="dm-actions">

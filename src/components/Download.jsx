@@ -134,7 +134,7 @@ export const Download = () => {
         <DownloadModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
-          downloadUrl="https://apkpure.com/p/com.jake285.Auri"
+          downloadUrl="https://i.apponthego.com/c9ef2"
         />
       </motion.div>
     </motion.div>
