@@ -63,7 +63,7 @@ function getOS() {
     return "iOS";
   }
 
-  return "Other";
+  return "Web";
 }
 
 // Track user OS
