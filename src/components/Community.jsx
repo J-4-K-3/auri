@@ -254,18 +254,33 @@ export const Community = () => {
 
   const handleReplySend = async (messageId) => {
     const replyText = replyTexts[messageId];
-    if (!replyText?.trim() || !userName || isSending) return;
+    if (!replyText?.trim() || !userName) return;
 
     try {
-      setIsSending(true);
-      
       const replyData = {
         author: userName,
         authorId: currentUser?.$id || '',
         message: replyText.trim()
       };
 
-      await addMessageReply(messageId, replyData);
+      console.log('Sending reply:', { messageId, replyData });
+      const replyResponse = await addMessageReply(messageId, replyData);
+      console.log('Reply sent successfully:', replyResponse);
+
+      // Update messages state to add the new reply to the parent's replies array
+      setMessages(prev => 
+        prev.map(msg => {
+          if (msg.$id === messageId) {
+            // Add reply to parent's replies array
+            const replies = msg.replies || [];
+            return {
+              ...msg,
+              replies: [...replies, replyResponse]
+            };
+          }
+          return msg;
+        })
+      );
       
       // Clear reply text and close reply section
       setReplyTexts(prev => ({ ...prev, [messageId]: '' }));
@@ -274,8 +289,6 @@ export const Community = () => {
     } catch (error) {
       console.error('Error sending reply:', error);
       setIsConnected(false);
-    } finally {
-      setIsSending(false);
     }
   };
 
@@ -284,8 +297,14 @@ export const Community = () => {
 
     try {
       console.log('Adding reaction:', { messageId, emojiName: emoji.name, userName: userName || 'Anonymous' });
-      const result = await addMessageReaction(messageId, emoji.name, userName || 'Anonymous');
-      console.log('Reaction added successfully:', result);
+      const updatedMessage = await addMessageReaction(messageId, emoji.name, userName || 'Anonymous');
+      
+      // Immediately update message in state
+      setMessages(prev => 
+        prev.map(msg => msg.$id === messageId ? updatedMessage : msg)
+      );
+      
+      console.log('Reaction added successfully:', updatedMessage);
       setShowReactionPicker(null);
     } catch (error) {
       console.error('Error adding reaction:', error);
@@ -437,7 +456,7 @@ export const Community = () => {
               >
                 <div className="message-header">
                   <div className="message-avatar">
-                    {message.author === 'Auri' ? (
+                    {message.author === 'Auri Official' ? (
                       <img src="/auri_logo.png" alt={message.author} />
                     ) : (
                       <div className="avatar-placeholder">
@@ -591,7 +610,7 @@ export const Community = () => {
                         <button 
                           className="reply-send-btn"
                           onClick={() => handleReplySend(message.$id)}
-                          disabled={!replyTexts[message.$id]?.trim() || isSending}
+                          disabled={!replyTexts[message.$id]?.trim()}
                         >
                           <FiSend size={14} />
                         </button>
