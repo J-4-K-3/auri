@@ -1136,11 +1136,76 @@ export const subscribeToReplies = (callback) => {
 const USER_NAME_KEY = "auri_user_name";
 
 /**
- * Get stored user name from localStorage
+ * Get stored user name from localStorage with mobile compatibility
  */
 export const getStoredUserName = () => {
   try {
-    return localStorage.getItem(USER_NAME_KEY) || "";
+    // Try localStorage first
+    const storedName = localStorage.getItem(USER_NAME_KEY);
+    if (storedName && storedName.trim()) {
+      console.log("Appwrite: Retrieved stored user name:", storedName);
+      return storedName;
+    }
+
+    // Fallback: try sessionStorage for mobile compatibility
+    try {
+      const sessionName = sessionStorage.getItem(USER_NAME_KEY);
+      if (sessionName && sessionName.trim()) {
+        console.log("Appwrite: Retrieved session user name:", sessionName);
+        // Sync back to localStorage for consistency
+        try {
+          localStorage.setItem(USER_NAME_KEY, sessionName);
+        } catch (syncError) {
+          console.warn("Appwrite: Could not sync to localStorage:", syncError);
+        }
+        return sessionName;
+      }
+    } catch (sessionError) {
+      console.warn("Appwrite: Session storage not available:", sessionError);
+    }
+
+    // Fallback: try to get from user object
+    try {
+      const user = getCurrentUser();
+      if (user && user.name && user.name.trim()) {
+        console.log("Appwrite: Using user object name:", user.name);
+        const cleanName = user.name.trim();
+        // Save for future use
+        try {
+          localStorage.setItem(USER_NAME_KEY, cleanName);
+        } catch (saveError) {
+          console.warn("Appwrite: Could not save user name:", saveError);
+        }
+        return cleanName;
+      }
+    } catch (userError) {
+      console.warn("Appwrite: User object not available:", userError);
+    }
+
+    // Mobile-specific fallback: Try cookies if available
+    try {
+      const cookies = document.cookie.split(';');
+      const nameCookie = cookies.find(cookie => cookie.trim().startsWith(`${USER_NAME_KEY}=`));
+      if (nameCookie) {
+        const cookieName = nameCookie.split('=')[1];
+        if (cookieName && cookieName.trim()) {
+          console.log("Appwrite: Retrieved user name from cookie:", cookieName);
+          const cleanName = cookieName.trim();
+          // Save to localStorage for future use
+          try {
+            localStorage.setItem(USER_NAME_KEY, cleanName);
+          } catch (saveError) {
+            console.warn("Appwrite: Could not save user name from cookie:", saveError);
+          }
+          return cleanName;
+        }
+      }
+    } catch (cookieError) {
+      console.warn("Appwrite: Cookie access not available:", cookieError);
+    }
+
+    console.log("Appwrite: No user name found, returning empty string");
+    return "";
   } catch (error) {
     console.error("Error retrieving user name:", error);
     return "";

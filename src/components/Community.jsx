@@ -353,18 +353,76 @@ export const Community = () => {
     }
   };
 
+  // Enhanced touch handler for mobile compatibility
+  const handleTouchReaction = (messageId, emoji, event) => {
+    // Prevent default behavior but don't stop propagation to allow proper event handling
+    if (event) {
+      event.preventDefault();
+      // Don't stopPropagation() as it can interfere with mobile touch events
+    }
+    
+    // Add touch-specific logging
+    console.log("Mobile: Touch reaction event:", {
+      messageId,
+      emojiName: emoji.name,
+      userName: userName || "Anonymous",
+      isMobile: /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+      touchCount: event?.touches?.length || 0,
+      timestamp: Date.now()
+    });
+
+    // Add a small delay to ensure proper touch event handling
+    setTimeout(() => {
+      handleReaction(messageId, emoji);
+    }, 50);
+  };
+
+  // Mobile-friendly reaction handler that works with both click and touch
+  const handleReactionMobile = (messageId, emoji, event) => {
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      handleTouchReaction(messageId, emoji, event);
+    } else {
+      // Desktop click handler
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      handleReaction(messageId, emoji);
+    }
+  };
+
   const handleReaction = async (messageId, emoji) => {
     if (isSending) return;
 
     try {
+      // Enhanced logging for mobile debugging
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       console.log("Frontend: Adding reaction:", {
         messageId,
         emojiName: emoji.name,
         userName: userName || "Anonymous",
+        isMobile,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
       });
 
+      // Ensure we have a valid user name
+      let effectiveUserName = userName;
+      if (!effectiveUserName || !effectiveUserName.trim()) {
+        console.warn("Frontend: No user name found, attempting to get stored name");
+        effectiveUserName = getStoredUserName();
+        if (!effectiveUserName || !effectiveUserName.trim()) {
+          console.error("Frontend: Still no valid user name available");
+          effectiveUserName = "Anonymous";
+        }
+      }
+
       // Use normalized user name for consistency
-      const normalizedUserName = (userName || "Anonymous").trim();
+      const normalizedUserName = effectiveUserName.trim();
+      console.log("Frontend: Using normalized user name:", normalizedUserName);
+
       const updatedMessage = await addMessageReaction(
         messageId,
         emoji.name,
@@ -394,6 +452,18 @@ export const Community = () => {
     } catch (error) {
       console.error("Frontend: Error adding reaction:", error);
       setIsConnected(false);
+      
+      // Additional mobile-specific error logging
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        console.error("Mobile-specific error details:", {
+          message: error.message,
+          stack: error.stack,
+          userAgent: navigator.userAgent,
+          userName: userName || "Anonymous",
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   };
 
@@ -603,6 +673,22 @@ export const Community = () => {
                               : message.$id
                           );
                         }}
+                        onTouchStart={(e) => {
+                          // Add touch-specific handler for mobile
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Mobile: Touch start on reaction button");
+                        }}
+                        onTouchEnd={(e) => {
+                          // Ensure touch events work properly on mobile
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowReactionPicker(
+                            message.$id === showReactionPicker
+                              ? null
+                              : message.$id
+                          );
+                        }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -624,6 +710,24 @@ export const Community = () => {
                                         " "
                                       )} - Click to see who reacted`}
                                       onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedReaction({
+                                          ...reaction,
+                                          messageId: message.$id,
+                                          messageAuthor: message.author,
+                                          messageText: message.message,
+                                        });
+                                        setShowReactionDetails(true);
+                                      }}
+                                      onTouchStart={(e) => {
+                                        // Mobile-specific touch handler
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        console.log("Mobile: Touch start on reaction item");
+                                      }}
+                                      onTouchEnd={(e) => {
+                                        // Ensure touch events work properly
                                         e.preventDefault();
                                         e.stopPropagation();
                                         setSelectedReaction({
@@ -675,6 +779,21 @@ export const Community = () => {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleReaction(message.$id, emoji);
+                                }}
+                                onTouchStart={(e) => {
+                                  // Mobile-specific touch handler for reaction popup
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  console.log("Mobile: Touch start on reaction popup:", emoji.name);
+                                }}
+                                onTouchEnd={(e) => {
+                                  // Mobile-specific touch end handler
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  // Add small delay for mobile touch handling
+                                  setTimeout(() => {
+                                    handleReaction(message.$id, emoji);
+                                  }, 50);
                                 }}
                                 whileHover={{ scale: 1.3 }}
                                 whileTap={{ scale: 0.9 }}
