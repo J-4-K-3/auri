@@ -403,7 +403,7 @@ export const Home = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="preview-modal-header">
-                  <h3>Preview Real App - OFFLINE</h3>
+                  <h3>Preview Real App</h3>
                   <button
                     className="modal-close"
                     onClick={() => setPreviewModalOpen(false)}
@@ -452,6 +452,10 @@ export const Home = () => {
                     className="understood-btn"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setPreviewModalOpen(false);
+                      window.location.href = 'https://brvci-m-jake285-8081.exp.direct/';
+                    }}
                   >
                     Understood
                   </motion.button>
