@@ -415,12 +415,13 @@ export const Home = () => {
                 <div className="preview-modal-content">
                   <p className="preview-warning" style={{ marginBottom: 20 }}>
                     This web preview shows the real Auri app in action. Some
-                    features are limited on the web and require an APK download.
-                    This preview is temporary and will be removed after 24
-                    hours. Account creation is disabled, you can only log in
-                    using the details provided below. Feel free to come back and
-                    drop a message in the Community Chat or leave us a review
-                    we’d love to hear from you.
+                    features are limited on the web and require downloading the
+                    APK. This preview is temporary, the session will expire
+                    after a certain period, but your details will remain the
+                    same. Account creation is disabled, you can only log in
+                    using the credentials provided below. Feel free to return
+                    anytime, leave a message in the Community Chat or share a
+                    review we’d love to hear from you
                   </p>
 
                   <div className="preview-credentials">
@@ -436,7 +437,7 @@ export const Home = () => {
                       style={{ marginBottom: 15 }}
                     >
                       <label>Password: </label>
-                      <span>Preview2024!</span>
+                      <span>Auri2025</span>
                     </div>
                   </div>
 
@@ -444,7 +445,10 @@ export const Home = () => {
                     className="understood-btn"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setPreviewModalOpen(false)}
+                    onClick={() => {
+                      setPreviewModalOpen(false);
+                      window.location.href = 'https://brvci-m-jake285-8081.exp.direct/';
+                    }}
                   >
                     Understood
                   </motion.button>

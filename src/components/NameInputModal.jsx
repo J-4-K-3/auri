@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiUser, FiX } from 'react-icons/fi';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiUser, FiX } from "react-icons/fi";
 
 export const NameInputModal = ({ isOpen, onClose, onSave }) => {
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const trimmedName = name.trim();
-    
+
     if (!trimmedName) {
-      setError('Please enter your name');
+      setError("Please enter your name");
       return;
     }
-    
+
     if (trimmedName.length < 2) {
-      setError('Name must be at least 2 characters');
+      setError("Name must be at least 2 characters");
       return;
     }
-    
+
     if (trimmedName.length > 150) {
-      setError('Name must be less than 150 characters');
+      setError("Name must be less than 150 characters");
       return;
     }
-    
+
     onSave(trimmedName);
-    setName('');
-    setError('');
+    setName("");
+    setError("");
   };
 
   const handleClose = () => {
-    setName('');
-    setError('');
+    setName("");
+    setError("");
     onClose();
   };
 
@@ -47,7 +47,7 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ duration: 0.3, type: 'spring', stiffness: 500 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 500 }}
         >
           <div className="name-modal-header">
             <h3>Welcome to Auri Community!</h3>
@@ -60,16 +60,18 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
               <FiX size={20} />
             </button>
           </div>
-          
+
           <div className="name-modal-content">
             <div className="name-modal-icon">
               <FiUser size={32} />
             </div>
             <p>
-              To join our peaceful community conversation, please tell us your name. 
-              This helps other members know who's sharing their thoughts.
+              To join our peaceful community conversation, please tell us your
+              name. This helps other members know who's sharing their thoughts.
+              PS navigation here might be hard, so scroll down at the bottom and
+              navigate to other screens there
             </p>
-            
+
             <form onSubmit={handleSubmit} className="name-form">
               <div className="name-input-group">
                 <label htmlFor="userName">Your Name</label>
@@ -79,7 +81,7 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    if (error) setError('');
+                    if (error) setError("");
                   }}
                   placeholder="Enter your name..."
                   className="name-input"
@@ -97,7 +99,7 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
                   </motion.span>
                 )}
               </div>
-              
+
               <div className="name-modal-actions">
                 <motion.button
                   type="button"
