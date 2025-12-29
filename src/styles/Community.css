@@ -76,12 +76,20 @@
 }
 
 .auri-message {
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(78, 205, 196, 0.1),
+    rgba(68, 160, 141, 0.1)
+  );
   border-color: rgba(78, 205, 196, 0.3);
 }
 
 .auri-message:hover {
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(68, 160, 141, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(78, 205, 196, 0.15),
+    rgba(68, 160, 141, 0.15)
+  );
   border-color: rgba(78, 205, 196, 0.4);
 }
 
@@ -109,7 +117,7 @@
 .avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--blush), #FF8A65);
+  background: linear-gradient(135deg, var(--blush), #ff8a65);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -199,10 +207,166 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Reply Message Cards */
+.reply-message {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.reply-message:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 138, 101, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Different styling for Auri replies */
+.reply-message.auri-reply {
+  background: linear-gradient(
+    135deg,
+    rgba(78, 205, 196, 0.08),
+    rgba(68, 160, 141, 0.08)
+  );
+  border-color: rgba(78, 205, 196, 0.25);
+}
+
+.reply-message.auri-reply:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(78, 205, 196, 0.12),
+    rgba(68, 160, 141, 0.12)
+  );
+  border-color: rgba(78, 205, 196, 0.35);
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reply-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.reply-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reply-avatar.avatar-placeholder {
+  background: linear-gradient(135deg, var(--blush), #ff8a65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+}
+
+.reply-avatar.auri-avatar {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reply-avatar.auri-avatar img {
+  width: 14px;
+  height: 14px;
+}
+
+.reply-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(233, 236, 244, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reply-author.auri-author {
+  color: #4ecdc4;
+}
+
+.reply-time {
+  font-size: 11px;
+  color: rgba(233, 236, 244, 0.5);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.reply-content {
+  font-size: 14px;
+  color: rgba(233, 236, 244, 0.9);
+  line-height: 1.4;
+  padding-left: 28px;
+  position: relative;
+}
+
+.reply-content::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 138, 101, 0.3) 20%,
+    rgba(255, 138, 101, 0.3) 80%,
+    transparent 100%
+  );
+  border-radius: 1px;
+}
+
+.reply-message.auri-reply .reply-content::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(78, 205, 196, 0.4) 20%,
+    rgba(78, 205, 196, 0.4) 80%,
+    transparent 100%
+  );
+}
+
+/* No replies message */
+.no-replies-message {
+  text-align: center;
+  padding: 20px;
+  color: rgba(233, 236, 244, 0.6);
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 8px 0;
+}
+
+/* Reply Input Section */
 .reply-input {
   display: flex;
   gap: 8px;
   align-items: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  margin-top: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .reply-text-input {
@@ -220,6 +384,7 @@
 .reply-text-input:focus {
   border-color: var(--blush);
   background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 138, 101, 0.1);
 }
 
 .reply-text-input::placeholder {
@@ -227,7 +392,7 @@
 }
 
 .reply-send-btn {
-  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -238,10 +403,36 @@
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.reply-send-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.reply-send-btn:hover::before {
+  opacity: 1;
 }
 
 .reply-send-btn:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.reply-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Message Input Container */
@@ -250,7 +441,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, #0F1220 0%, #161A2A 100%);
+  background: linear-gradient(135deg, #0f1220 0%, #161a2a 100%);
   border-top: 1px solid rgba(255, 138, 101, 0.15);
   padding: 20px;
   backdrop-filter: blur(10px);
@@ -312,7 +503,7 @@
 }
 
 .send-button {
-  background: linear-gradient(135deg, #FF8A65, #F76E8E);
+  background: linear-gradient(135deg, #ff8a65, #f76e8e);
   border: none;
   border-radius: 50%;
   width: 36px;
@@ -380,7 +571,11 @@
 
 .emoji-popup {
   position: relative;
-  background: linear-gradient(135deg, rgba(30, 35, 52, 0.95), rgba(20, 25, 40, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(30, 35, 52, 0.95),
+    rgba(20, 25, 40, 0.95)
+  );
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 20px;
@@ -464,12 +659,12 @@
 }
 
 .emoji-category-btn:hover {
-  background: 255,  rgba(255,255, 0.1);
+  background: 255, rgba(255, 255, 0.1);
   transform: scale(1.05);
 }
 
 .emoji-category-btn.active {
-  background: linear-gradient(135deg, #FF8A65, #F76E8E);
+  background: linear-gradient(135deg, #ff8a65, #f76e8e);
   box-shadow: 0 4px 12px rgba(255, 138, 101, 0.3);
 }
 
