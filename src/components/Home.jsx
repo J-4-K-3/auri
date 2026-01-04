@@ -173,7 +173,7 @@ export const Home = () => {
                 >
                   Check out the Community
                 </motion.button>
-                <motion.button
+                {/*<motion.button
                   className="preview-btn"
                   variants={itemVariants}
                   whileHover={{ scale: 1.05 }}
@@ -181,7 +181,7 @@ export const Home = () => {
                   onClick={() => setPreviewModalOpen(true)}
                 >
                   Preview Real App
-                </motion.button>
+                </motion.button>*/}
               </div>
             </motion.div>
 
