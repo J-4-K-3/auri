@@ -48,6 +48,7 @@ export const Community = () => {
   const [replyTexts, setReplyTexts] = useState({});
   const [replies, setReplies] = useState({}); // Store replies per messageId
   const [reactionUpdates, setReactionUpdates] = useState({}); // Track pending reaction updates for immediate UI feedback
+  const [activeMessage, setActiveMessage] = useState(null); // Track which message is tapped/active
 
   // Modal and user management
   const [showNameModal, setShowNameModal] = useState(false);
@@ -641,13 +642,16 @@ export const Community = () => {
                   key={message.$id}
                   className={`chat-message-wrapper ${
                     isCurrentUser(message.author) ? "own-message" : ""
-                  }`}
+                  } ${activeMessage === message.$id ? "active" : ""}`}
                   variants={itemVariants}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                   layout
+                  onClick={() => {
+                    setActiveMessage(activeMessage === message.$id ? null : message.$id);
+                  }}
                 >
                   {/* Main Message Bubble */}
                   <div className={`chat-bubble ${
