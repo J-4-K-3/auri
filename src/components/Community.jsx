@@ -133,7 +133,11 @@ export const Community = () => {
 
         // Only update if we have new messages or message count changed
         if (fetchedMessages.length !== lastMessageCountRef.current) {
-          setMessages(fetchedMessages);
+          // Sort in ascending order - oldest messages at top, newest at bottom
+          const sortedMessages = fetchedMessages.sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          );
+          setMessages(sortedMessages);
           lastMessageCountRef.current = fetchedMessages.length;
           setLastUpdate(new Date());
           setIsConnected(true);
@@ -193,7 +197,11 @@ export const Community = () => {
   const loadMessages = async () => {
     try {
       const fetchedMessages = await fetchCommunityMessages();
-      setMessages(fetchedMessages);
+      // Sort in ascending order - oldest messages at top, newest at bottom
+      const sortedMessages = fetchedMessages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      setMessages(sortedMessages);
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Error loading messages:", error);
@@ -215,8 +223,9 @@ export const Community = () => {
             // Check if message already exists to avoid duplicates
             const exists = prev.some((msg) => msg.$id === newMessage.$id);
             if (!exists) {
+              // Sort in ascending order - oldest messages at top, newest at bottom
               const updatedMessages = [...prev, newMessage].sort(
-                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
               );
               // Update last message count for polling
               lastMessageCountRef.current = updatedMessages.length;
@@ -227,10 +236,11 @@ export const Community = () => {
         } else if (response.events.includes("databases.documents.update")) {
           // Message updated (e.g., reactions, replies)
           const updatedMessage = response.payload;
+          // Re-sort after update to maintain ascending order
           setMessages((prev) =>
             prev.map((msg) =>
               msg.$id === updatedMessage.$id ? updatedMessage : msg
-            )
+            ).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
           );
         }
       });
