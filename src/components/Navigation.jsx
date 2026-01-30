@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar, FiSun } from 'react-icons/fi';
 import '../styles/Navigation.css';
+import ThemeSwitcherPopup from './ThemeSwitcherPopup';
 
 export const Navigation = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showBottomNav, setShowBottomNav] = useState(true);
+  const [showThemePopup, setShowThemePopup] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -48,6 +50,13 @@ export const Navigation = () => {
         <Link to="/" className="nav-wordmark">
           Auri
         </Link>
+        <button
+          className="theme-toggle-btn"
+          onClick={() => setShowThemePopup(true)}
+          aria-label="Switch theme"
+        >
+          <FiSun size={20} color='#FF8A65' />
+        </button>
         <button
           className="nav-toggle"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -130,6 +139,11 @@ export const Navigation = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ThemeSwitcherPopup
+        isVisible={showThemePopup}
+        onClose={() => setShowThemePopup(false)}
+      />
     </nav>
   );
 };

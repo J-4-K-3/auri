@@ -27,27 +27,31 @@ const themeInfo = {
   },
 };
 
-export const ThemeSwitcherPopup = () => {
-  const { 
-    hasSeenThemePopup, 
-    markThemePopupSeen, 
+export const ThemeSwitcherPopup = ({ isVisible: externalIsVisible, onClose: externalOnClose }) => {
+  const {
+    hasSeenThemePopup,
+    markThemePopupSeen,
     switchTheme,
     availableThemes,
-    theme 
+    theme
   } = useTheme();
-  
+
   const [selectedTheme, setSelectedTheme] = useState(theme);
-  const [isVisible, setIsVisible] = useState(!hasSeenThemePopup);
+  const [internalIsVisible, setInternalIsVisible] = useState(!hasSeenThemePopup);
+
+  // Use external visibility if provided, otherwise use internal
+  const isVisible = externalIsVisible !== undefined ? externalIsVisible : internalIsVisible;
+  const onClose = externalOnClose || (() => setInternalIsVisible(false));
 
   const handleChooseTheme = (themeName) => {
     switchTheme(themeName);
-    setIsVisible(false);
-    markThemePopupSeen();
+    onClose();
+    if (!externalOnClose) markThemePopupSeen();
   };
 
   const handleClose = () => {
-    setIsVisible(false);
-    markThemePopupSeen();
+    onClose();
+    if (!externalOnClose) markThemePopupSeen();
   };
 
   if (!isVisible) return null;
