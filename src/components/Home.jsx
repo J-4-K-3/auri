@@ -4,10 +4,10 @@ import "../styles/Home.css";
 import DownloadModal from "./DownloadModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Chatbot from "../lib/Chatbot";
 
 export const Home = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Critical styles to ensure buttons work correctly
@@ -151,192 +151,45 @@ export const Home = () => {
         animate="visible"
       >
         <motion.div className="home-content" variants={itemVariants}>
-          {/* Hero Section */}
-          <div className="hero-layout">
-            <motion.div className="hero-text" variants={itemVariants}>
-              <h2>Welcome to Auri</h2>
-              <p className="tagline">A calm place to share your world.</p>
-              <p className="description">
-                Escape the chaos of traditional social media and discover a
-                peaceful sanctuary where meaningful connections flourish. Share
-                authentic moments, connect with like-minded people, and build
-                genuine relationships in a space designed for calm, mindful
-                interaction.
+          {/* Chatbot Section */}
+          <p className="speak-auri">Talk to Auri</p>
+          <motion.div className="chatbot-section" variants={itemVariants} style={{ minHeight: '100vh', position: 'relative' }}>
+            <Chatbot />
+          </motion.div>
+
+          {/* Intro Section - Hero */}
+          <motion.div className="intro-section" variants={itemVariants}>
+            <h2 className="intro-title">Welcome to Auri 🌟</h2>
+            <p className="intro-text">
+              A calm space for real connections.
+            </p>
+            <p className="intro-description">
+              Auri is a friendly space where you can share moments and connect with people who get you. No drama, no stress - just genuine interactions with friends old and new.
+            </p>
+            <p className="intro-description">
+              Auri (pronounced "Ari") is a chill space where real connections happen. No endless scrolling, no drama, no algorithms pushing content you don't care about. Just genuine people sharing moments and building friendships. Think of it as your happy place online.
               </p>
-              <div className="hero-buttons">
-                <motion.button
-                  className="community-btn"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate("/community")}
-                >
-                  Check out the Community
-                </motion.button>
-                <motion.button
-                  className="preview-btn"
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setPreviewModalOpen(true)}
-                >
-                  Preview Real App
-                </motion.button>
-              </div>
-            </motion.div>
-
-            <motion.div className="phone-mockups" variants={itemVariants}>
-              <img
-                src="/home-portrait.png"
-                alt="Auri Home Screen 2"
-                className="phone-mockup"
-              />
-              <img
-                src="/profile-portrait.png"
-                alt="Auri Profile Screen"
-                className="phone-mockup"
-              />
-            </motion.div>
-          </div>
-
-          {/* Features Grid Section */}
-          <motion.div className="features-section" variants={itemVariants}>
-            <h2>Why People Choose Auri</h2>
-            <div className="features-grid">
-              <div className="feature-item">
-                <h3>Peaceful Feeds</h3>
-                <p>
-                  Share and discover content at your own pace - no comparison
-                </p>
-              </div>
-              <div className="feature-item">
-                <h3>Authentic Reels</h3>
-                <p>Enjoy short, genuine videos from everyone, everywhere</p>
-              </div>
-              <div className="feature-item">
-                <h3>Auri Shop</h3>
-                <p>
-                  Support independent creators and find unique products you need
-                  or want
-                </p>
-              </div>
-              <div className="feature-item">
-                <h3>Private Messages</h3>
-                <p>Connect deeply with friends without public performance</p>
-              </div>
-              <div className="feature-item">
-                <h3>True Profiles</h3>
-                <p>Express your real self without filters or other personas</p>
-              </div>
-              <div className="feature-item">
-                <h3>Meaningful Donations</h3>
-                <p>Support causes that matter to you and your community</p>
-              </div>
-              <div className="feature-item">
-                <h3>Like-Minded Groups</h3>
-                <p>Find your tribe and build lasting relationships</p>
-              </div>
-              <div className="feature-item">
-                <h3>Creator Marketplace</h3>
-                <p>
-                  Join fellow creators and sell your unique products in Auri
-                  Shop's community-driven marketplace
-                </p>
-              </div>
-              <div className="feature-item">
-                <h3>Personalized Experience</h3>
-                <p>
-                  Crafted settings and preferences that adapt to your entire
-                  Auri journey for seamless customization
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* What is Auri Section */}
-          <motion.div className="about-section" variants={itemVariants}>
-            <h2>What is Auri?</h2>
-            <p>
-              Auri (pronounced "Ari") is your escape from the chaos of modern
-              social media. Imagine a peaceful digital sanctuary where
-              meaningful connections flourish without the endless scroll, toxic
-              arguments, or algorithmic pressure to perform. Here, you share
-              authentically, connect deeply, and rediscover the joy of genuine
-              human interaction.
-            </p>
-          </motion.div>
-
-          {/* Community Thresholds Section */}
-          <motion.div className="thresholds-section" variants={itemVariants}>
-            <h2>Unlock Auri's Full Experience</h2>
-            <p className="thresholds-intro">
-              Each feature unlocks when Auri reaches the number of active
-              community members shown below. Join us to help grow the community
-              and unlock even more features to come
-            </p>
-            <div className="thresholds-grid">
-              <div className="threshold-item">
-                <div className="threshold-number">50</div>
-                <div className="threshold-feature">Auri Shop</div>
-                <div className="threshold-desc">
-                  Support creators & discover unique products
-                </div>
-              </div>
-              <div className="threshold-item">
-                <div className="threshold-number">150</div>
-                <div className="threshold-feature">Private Messages</div>
-                <div className="threshold-desc">
-                  Deep, meaningful conversations
-                </div>
-              </div>
-              <div className="threshold-item">
-                <div className="threshold-number">150</div>
-                <div className="threshold-feature">New Emoji Collection</div>
-                <div className="threshold-desc">
-                  Express yourself with Auri's emoji packs
-                </div>
-              </div>
-              <div className="threshold-item">
-                <div className="threshold-number">200</div>
-                <div className="threshold-feature">Advanced Camera Tools</div>
-                <div className="threshold-desc">
-                  Built-in editing & creative photography features
-                </div>
-              </div>
-              <div className="threshold-item">
-                <div className="threshold-number">250</div>
-                <div className="threshold-feature">Video Calling</div>
-                <div className="threshold-desc">Face-to-face connections</div>
-              </div>
-              <div className="threshold-item">
-                <div className="threshold-number">300</div>
-                <div className="threshold-feature">Live Streaming</div>
-                <div className="threshold-desc">Share moments in real-time</div>
-              </div>
-            </div>
-            <p className="thresholds-cta">
-              Join our growing community and be part of unlocking these
-              features!
-            </p>
-          </motion.div>
-
-          {/* Our Mission Section */}
-          <motion.div className="mission-section" variants={itemVariants}>
-            <h2>Our Mission</h2>
-            <p>
-              We're not just another social app – we're rebuilding social media
-              from the ground up. Auri eliminates the clutter that drains your
-              energy and replaces it with spaces for growth, creativity, and
-              real human connection. Join thousands who've already discovered
-              that social media can be calm, meaningful, and truly social again.
-            </p>
-          </motion.div>
-
-          {/* Download Section */}
-          <motion.div className="download-section" variants={itemVariants}>
-            <div className="button-group">
+            <div className="intro-buttons">
               <motion.button
-                className="download-btn"
+                className="intro-btn community-btn"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/community")}
+              >
+                Visit Community
+              </motion.button>
+              <motion.button
+                className="intro-btn primary-btn"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.open('https://auri-platform.vercel.app', '_blank')}
+              >
+                Visit Auri
+              </motion.button>
+              <motion.button
+                className="intro-btn download-btn"
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -344,6 +197,238 @@ export const Home = () => {
               >
                 Download APK
               </motion.button>
+            </div>
+            <p className="button-explanations">
+              Check out our Community to see what people are sharing. Explore Auri for the full experience. Or download our app to stay connected wherever you go.
+            </p>
+          </motion.div>
+
+          {/* Image Gallery Section */}
+          <motion.div className="gallery-section" variants={itemVariants}>
+            <div className="gallery-images">
+              <img src="/splash-portrait.png" alt="Auri member" className="gallery-image" />
+              <img src="/onboard-portrait.png" alt="Auri member" className="gallery-image" />
+              <img src="/home-portrait.png" alt="Auri member" className="gallery-image" />
+              <img src="/reels.png" alt="Auri member" className="gallery-image" />
+              <img src="/profile-portrait.png" alt="Auri member" className="gallery-image" />
+            </div>
+            <p className="intro-description" style={{ marginTop: 15 }}>
+              Beautiful UI that's not just about looking pretty. It's about creating connections that make you feel like you're in a safe, warm place.
+            </p>
+          </motion.div>
+
+          {/* Coming Soon - New Features Section */}
+          <motion.div className="coming-soon-section" variants={itemVariants}>
+            <div className="coming-soon-header">
+              <h2 className="coming-soon-title">WELCOMING SOON</h2>
+            </div>
+            <p className="coming-soon-subtitle">
+              Cool new features are coming soon! Here's what's in the works:
+            </p>
+            <div className="coming-soon-grid">
+              <div className="coming-soon-card">
+                <img src="/shopping_bags_3d.png" alt="In-App Shop" className="coming-soon-card-icon" />
+                <h3>In-App Shop</h3>
+                <p>Discover and purchase unique products directly within Auri. Support creators and find items you love!</p>
+                <div className="coming-soon-badge hot">OPENING SOON</div>
+              </div>
+              <div className="coming-soon-card featured">
+                <img src="/department_store_3d.png" alt="Seller Portal" className="coming-soon-card-icon" />
+                <h3>Seller Portal</h3>
+                <p>Start your own shop within Auri! Reach thousands of community members and turn your passion into profit.</p>
+                <div className="coming-soon-badge hot">BECOME A SELLER</div>
+              </div>
+              <div className="coming-soon-card featured">
+                <img src="/convenience_store_3d.png" alt="Seller Mini" className="coming-soon-card-icon" />
+                <h3>Seller Mini</h3>
+                <p>Turn your digital goods and services into income. Sell at your own pace and unlock new opportunities for yourself and others!</p>
+                <div className="coming-soon-badge hot">BE A MINI</div>
+              </div>
+              <div className="coming-soon-card featured">
+                <img src="/artist_palette_3d.png" alt="Enhanced Customization" className="coming-soon-card-icon" />
+                <h3>Enhanced Customization</h3>
+                <p>More themes, layouts, and personalization options to make Auri truly yours!</p>
+                <div className="coming-soon-badge hot">NEW FEATURES</div>
+              </div>
+              <div className="coming-soon-card">
+                <img src="/locked_3d.png" alt="Enhanced Privacy" className="coming-soon-card-icon" />
+                <h3>Enhanced Privacy</h3>
+                <p>New privacy controls to give you more control over your data and who sees your content.</p>
+                <div className="coming-soon-badge">SECURE</div>
+              </div>
+              <div className="coming-soon-card">
+                <img src="/camera_3d.png" alt="In-App Camera" className="coming-soon-card-icon" />
+                <h3>In-App Camera</h3>
+                <p>Take photos and videos right within Auri! Built-in camera for capturing moments instantly.</p>
+                <div className="coming-soon-badge">NEW CAMERA</div>
+              </div>
+              <div className="coming-soon-card featured">
+                <img src="/globe_with_meridians_3d.png" alt="Web Experience" className="coming-soon-card-icon" />
+                <h3>Web Experience</h3>
+                <p>Full Auri experience coming to desktop browsers - access Auri from anywhere!</p>
+                <div className="coming-soon-badge">GO TO AURI</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Mini Games Section - Coming Soon */}
+          <motion.div className="mini-games-section" variants={itemVariants}>
+            <div className="mini-games-header">
+              <span className="mini-games-emoji">🎮</span>
+              <h2 className="mini-games-title">FUN REWARDS</h2>
+              <span className="mini-games-emoji">🎁</span>
+            </div>
+            <p className="mini-games-subtitle">
+              Play mini-games for fun and earn small rewards as a thank you for being part of our growing community!
+            </p>
+            <div className="mini-games-grid">
+              <div className="mini-games-card">
+                <div className="mini-games-card-icon">🎲</div>
+                <h3>Play for Fun</h3>
+                <p>Enjoy simple, relaxing mini-games designed for entertainment and a quick break from the day.</p>
+                <div className="mini-games-badge hot">JUST FOR FUN</div>
+              </div>
+              <div className="mini-games-card">
+                <div className="mini-games-card-icon">💝</div>
+                <h3>Earn Small Rewards</h3>
+                <p>As a token of appreciation, earn $0.50 via PayPal for your time and participation.</p>
+                <div className="mini-games-badge">THANK YOU GIFTS</div>
+              </div>
+              <div className="mini-games-card">
+                <div className="mini-games-card-icon">🌱</div>
+                <h3>Grow Together</h3>
+                <p>The more our community grows, the more rewards and features we'll be able to share with you!</p>
+                <div className="mini-games-badge">BUILDING TOGETHER</div>
+              </div>
+            </div>
+            <p className="mini-games-note">
+              🎯 This is our way of saying thanks for being here. No promises, just genuine appreciation for our Auri community! 💙
+            </p>
+          </motion.div>
+
+          {/* Auri Connections Section - Available Now */}
+          <motion.div className="connections-section" variants={itemVariants}>
+            <div className="connections-card">
+              <h2>Auri Connections</h2>
+              <p className="connections-intro">
+                Your inner circle, all in one place.
+              </p>
+              <div className="connections-features">
+                <div className="connection-feature">
+                  <span className="connection-feature-icon">🛒</span>
+                  <div className="connection-feature-text">
+                    <h4>Borrow to Shop</h4>
+                    <p>Need cash now? Ask friends or family for help, then pay them back when you can.</p>
+                  </div>
+                </div>
+                <div className="connection-feature">
+                  <span className="connection-feature-icon">🔐</span>
+                  <div className="connection-feature-text">
+                    <h4>Secure Verification</h4>
+                    <p>Forgot your password? Friends and family can vouch for you so you can get back in.</p>
+                  </div>
+                </div>
+                <div className="connection-feature">
+                  <span className="connection-feature-icon">💬</span>
+                  <div className="connection-feature-text">
+                    <h4>Stay Connected</h4>
+                    <p>Share moments, send invites, and keep up with the people you care about.</p>
+                  </div>
+                </div>
+              </div>
+              <p className="connections-cta">
+                Link up with your closest friends and family for a cozy and safe space to meet! ❤️
+              </p>
+            </div>
+          </motion.div>
+          
+          {/* Giveaway Celebration Section */}
+          <motion.div className="giveaway-section" variants={itemVariants}>
+            <div className="giveaway-header">
+              <span className="giveaway-emoji">🎉</span>
+              <h2 className="giveaway-title">EXCLUSIVE GIVEAWAY!</h2>
+              <span className="giveaway-emoji">🎉</span>
+            </div>
+            <p className="giveaway-subtitle">
+              🎁 Celebrate with us! As a token of appreciation for joining our community, we're excited to reward our members with exclusive perks.
+            </p>
+            <div className="giveaway-grid">
+              <div className="giveaway-card featured">
+                <div className="giveaway-card-icon">🎰</div>
+                <h3>Random Selection</h3>
+                <p>Selected participants will receive unique rewards and benefits. Purely our way of showing gratitude!</p>
+                <div className="giveaway-badge hot">NO CATCH!</div>
+              </div>
+              <div className="giveaway-card">
+                <div className="giveaway-card-icon">🎭</div>
+                <h3>Community Talent Show</h3>
+                <p>Showcase your talents and shine within our community. Let your unique skills take center stage.</p>
+                <div className="giveaway-badge">SHOW YOUR TALENT</div>
+              </div>
+            </div>
+            <p className="giveaway-note">
+              ⏰ This exclusive opportunity is time-limited. Secure your chance before it ends around 8 months from now.
+            </p>
+            <div className="giveaway-cta">
+              <p>Become part of our thriving community and join the celebration! 🎊</p>
+            </div>
+          </motion.div>
+
+          {/* Community Thresholds Section */}
+          <motion.div className="thresholds-section" variants={itemVariants}>
+            <div className="thresholds-header">
+              <h2>Unlock Auri's Full Experience</h2>
+            </div>
+            <p className="thresholds-intro">
+              New features unlock as our community grows! Join us and help reach these goals together.
+            </p>
+            <div className="thresholds-grid">
+              <div className="threshold-item">
+                <div className="threshold-number">150</div>
+                <div className="threshold-feature">New Emoji Collection</div>
+                <div className="threshold-desc">
+                  Express yourself with Auri's emoji packs
+                </div>
+                <div className="threshold-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: '45%' }}></div>
+                  </div>
+                  <span className="progress-text">number of community needed</span>
+                </div>
+              </div>
+              <div className="threshold-item">
+                <div className="threshold-number">200</div>
+                <div className="threshold-feature">In-app Camera Tools</div>
+                <div className="threshold-desc">
+                  Built-in editing & creative photography features
+                </div>
+                <div className="threshold-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: '34%' }}></div>
+                  </div>
+                  <span className="progress-text">number of community needed</span>
+                </div>
+              </div>
+              <div className="threshold-item">
+                <div className="threshold-number">300</div>
+                <div className="threshold-feature">Live Streaming</div>
+                <div className="threshold-desc">Share moments in real-time</div>
+                <div className="threshold-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: '23%' }}></div>
+                  </div>
+                  <span className="progress-text">number of community needed</span>
+                </div>
+              </div>
+            </div>
+            <p className="thresholds-cta">
+              Be part of our community and help us unlock these exciting features together! 💙
+            </p>
+          </motion.div>
+
+          {/* Download Section */}
+          <motion.div className="download-section" variants={itemVariants}>
+            <div className="button-group">
               <motion.button
                 style={{
                   background: "linear-gradient(135deg, #667eea, #764ba2)",
@@ -382,76 +467,8 @@ export const Home = () => {
           <DownloadModal
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}
-            downloadUrl="https://i.apponthego.com/c9ef2"
+            downloadUrl="https://i.apponthego.com/1e8f9"
           />
-
-          {/* Preview Modal */}
-          {previewModalOpen && (
-            <motion.div
-              className="modal-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setPreviewModalOpen(false)}
-            >
-              <motion.div
-                className="preview-modal"
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="preview-modal-header">
-                  <h3>Preview Real App</h3>
-                  <button
-                    className="modal-close"
-                    onClick={() => setPreviewModalOpen(false)}
-                  >
-                    ×
-                  </button>
-                </div>
-
-                <div className="preview-modal-content">
-                  <p className="preview-warning" style={{ marginBottom: 20 }}>
-                    This web preview shows the real Auri app in action. Some
-                    features are limited on the web and require an APK download.
-                    This preview is temporary and will be removed after 24
-                    hours. Account creation is disabled, you can only log in
-                    using the details provided below. Feel free to come back and
-                    drop a message in the Community Chat or leave us a review
-                    we’d love to hear from you.
-                  </p>
-
-                  <div className="preview-credentials">
-                    <div
-                      className="credential-item"
-                      style={{ marginBottom: 10 }}
-                    >
-                      <label>Email: </label>
-                      <span>preview@auri.app</span>
-                    </div>
-                    <div
-                      className="credential-item"
-                      style={{ marginBottom: 15 }}
-                    >
-                      <label>Password: </label>
-                      <span>Preview2024!</span>
-                    </div>
-                  </div>
-
-                  <motion.button
-                    className="understood-btn"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setPreviewModalOpen(false)}
-                  >
-                    Understood
-                  </motion.button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
         </motion.div>
       </motion.div>
     </>

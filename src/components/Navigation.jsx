@@ -1,21 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiDownload, FiStar } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar } from 'react-icons/fi';
 import '../styles/Navigation.css';
 
 export const Navigation = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showBottomNav, setShowBottomNav] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > lastScrollY.current) {
+        // Scrolling down - hide bottom nav
+        setShowBottomNav(false);
+      } else {
+        // Scrolling up - show bottom nav
+        setShowBottomNav(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
     { path: '/', label: 'Home', icon: FiHome },
     { path: '/community', label: 'Community', icon: FiUsers },
+    { path: '/support', label: 'Support', icon: FiFileText },
     { path: '/terms', label: 'Legal', icon: FiFileText },
-    { path: '/download', label: 'Download', icon: FiDownload },
     { path: '/reviews', label: 'Reviews', icon: FiStar },
   ];
 
@@ -82,21 +105,31 @@ export const Navigation = () => {
         )}
       </AnimatePresence>
 
-      <div className="bottom-nav">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`bottom-nav-link ${isActive(item.path) ? 'active' : ''}`}
-            >
-              <Icon size={20} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
+      <AnimatePresence>
+        {showBottomNav && (
+          <motion.div
+            className="bottom-nav"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.3 }}
+          >
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`bottom-nav-link ${isActive(item.path) ? 'active' : ''}`}
+                >
+                  <Icon size={20} />
+                  <span className="nav-label">{item.label}</span>
+                </Link>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

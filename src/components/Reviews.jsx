@@ -143,7 +143,7 @@ export const Reviews = () => {
           userId: cleanUserId,
           verified: !!cleanUserId,
           createdAt: new Date().toISOString(),
-          appVersion: '1.0',
+          appVersion: '2.0',
           reported: false,
           isLocal: true, // Mark as pending sync
         };

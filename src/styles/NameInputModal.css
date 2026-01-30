@@ -79,10 +79,17 @@
 }
 
 .name-modal-content p {
-  margin: 0 0 32px;
-  font-size: 16px;
-  line-height: 1.5;
-  opacity: 0.9;
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+.name-modal-hint {
+  font-size: 14px !important;
+  opacity: 0.8 !important;
+  margin-bottom: 24px !important;
+  font-style: italic;
 }
 
 .name-form {

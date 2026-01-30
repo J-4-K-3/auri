@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaTiktok, FaEnvelope, FaHeart, FaDiscord } from "react-icons/fa";
+import { SurveyPopup } from './SurveyPopup';
 import '../styles/Footer.css';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [surveyOpen, setSurveyOpen] = useState(false);
 
   return (
     <footer className="footer">
+      {/* Survey Section 
+      <div className="survey-section">
+        <div className="survey-container">
+          <p className="survey-text">
+            Help us improve Auri! Spend just 1 minute answering 5 quick questions and get $2 transferred to your PayPal as a thank you.
+          </p>
+          <button className="survey-button" onClick={() => setSurveyOpen(true)}>
+            Take Survey & Earn $2
+          </button>
+        </div>
+      </div>*/}
       <div className="footer-content">
         {/* Logo and Brand Section */}
         <div className="footer-section footer-brand">
@@ -16,28 +29,13 @@ export const Footer = () => {
           <p className="footer-mission">Building peaceful social connections</p>
         </div>
 
-        {/* Navigation Links */}
-        <div className="footer-section footer-nav">
-          <h4>Navigation</h4>
-          <nav className="footer-nav-links">
-            <Link to="/" className="footer-link">Home</Link>
-            <Link to="/community" className="footer-link">Community</Link>
-            <Link to="/download" className="footer-link">Download</Link>
-            <Link to="/reviews" className="footer-link">Reviews</Link>
-            <Link to="/terms" className="footer-link">Terms</Link>
-          </nav>
-        </div>
-
         {/* Company Info */}
         <div className="footer-section footer-company">
           <h4>Company</h4>
           <div className="company-info">
             <p className="company-name">Innoxation Tech Inc</p>
             <p className="copyright">&copy; {currentYear} All rights reserved.</p>
-            <p className="footer-meta">Version 1.0</p>
-            <p className="footer-support">
-              Support: <a className="footer-support-link" href="mailto:innoxation.tech@gmail.com">innoxation.tech@gmail.com</a>
-            </p>
+            <p className="footer-meta">Version 2.0</p>
           </div>
         </div>
 
@@ -63,6 +61,17 @@ export const Footer = () => {
             </a>
           </div>
         </div>
+
+        {/* Resources 
+        <div className="footer-section footer-resources">
+          <h4>Resources</h4>
+          <div className="footer-resources-links">
+            <Link to="/" className="footer-link">Help Center</Link>
+            <Link to="/terms" className="footer-link">FAQ</Link>
+            <Link to="/community" className="footer-link">Community Guidelines</Link>
+            <Link to="/reviews" className="footer-link">User Feedback</Link>
+          </div>
+        </div>*/}
       </div>
 
       {/* Footer Bottom */}
@@ -79,6 +88,7 @@ export const Footer = () => {
           </div>
         </div>
       </div>
+      <SurveyPopup isOpen={surveyOpen} onClose={() => setSurveyOpen(false)} />
     </footer>
   );
 };

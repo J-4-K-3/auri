@@ -27,7 +27,7 @@
 
 .dm-message {
   font-size: 14px;
-  color: rgba(233, 236, 244, 0.86);
+  color: var(--white);
   line-height: 1.6;
   white-space: pre-line;
   margin-bottom: 18px;
@@ -38,7 +38,7 @@
   border-left: 3px solid rgba(255, 138, 101, 0.14);
   padding: 12px 14px;
   border-radius: 8px;
-  color: rgba(233, 236, 244, 0.95);
+  color: var(--white);
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 14px;
@@ -59,13 +59,13 @@
 
 .dm-cancel {
   background: transparent;
-  color: rgba(233, 236, 244, 0.8);
+  color: var(--white);
   border: 1px solid rgba(233, 236, 244, 0.04);
 }
 
 .dm-confirm {
   background: linear-gradient(135deg, #FF8A65, #F76E8E);
-  color: white;
+  color: var(--white);
   border: none;
 }
 

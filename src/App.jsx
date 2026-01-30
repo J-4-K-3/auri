@@ -7,11 +7,13 @@ import { Helmet } from 'react-helmet';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Home } from './components/Home';
 import { Community } from './components/Community';
-import { Download } from './components/Download';
+import { Support } from './components/Support';
 import { Reviews } from './components/Reviews';
 import { Terms } from './components/Terms';
 import { Footer } from './components/Footer';
 import { Navigation } from './components/Navigation';
+import { ThemeProvider } from './theme/ThemeContext';
+import { ThemeSwitcherPopup } from './components/ThemeSwitcherPopup';
 
 import { databases, APPWRITE_DATABASE_ID, IDs, COLLECTION_TRACKER_ID } from './lib/Appwrite';
 import './styles/globals.css';
@@ -29,12 +31,14 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/community" element={<Community />} />
-          <Route path="/download" element={<Download />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/terms" element={<Terms />} />
         </Routes>
       </main>
       <Footer />
+      {/* Theme switcher popup appears on all pages */}
+      <ThemeSwitcherPopup />
     </div>
   );
 }
@@ -142,7 +146,9 @@ function App() {
           <LoadingScreen key="loading" onLoadingComplete={handleLoadingComplete} />
         ) : (
           <Router>
-            <AppLayout />
+            <ThemeProvider>
+              <AppLayout />
+            </ThemeProvider>
           </Router>
         )}
       </AnimatePresence>

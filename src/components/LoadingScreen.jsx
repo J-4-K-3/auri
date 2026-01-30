@@ -8,7 +8,7 @@ export const LoadingScreen = ({ onLoadingComplete }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       onLoadingComplete();
-    }, 10000);
+    }, 5000);
 
     return () => clearTimeout(timeout);
   }, [onLoadingComplete]);

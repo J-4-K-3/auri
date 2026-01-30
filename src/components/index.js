@@ -5,3 +5,5 @@ export { Download } from './Download';
 export { Reviews } from './Reviews';
 export { Navigation } from './Navigation';
 export { Footer } from './Footer';
+export { SurveyPopup } from './SurveyPopup';
+export { ThemeSwitcherPopup } from './ThemeSwitcherPopup';

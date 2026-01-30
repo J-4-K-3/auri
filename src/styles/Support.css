@@ -1,0 +1,297 @@
+/* Support Screen Styles */
+
+.support-container {
+  min-height: 100vh;
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
+  color: var(--theme-text);
+  padding: 30px 16px 50px;
+  font-family: inherit;
+}
+
+.support-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.support-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.support-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--theme-text);
+}
+
+.support-subtitle {
+  font-size: 0.9rem;
+  color: var(--theme-text);
+  opacity: 0.8;
+}
+
+.support-section {
+  margin-bottom: 24px;
+}
+
+.section-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 24px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.section-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--theme-text);
+}
+
+.section-description {
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--theme-text);
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+.reviews-card {
+  background: rgba(102, 126, 234, 0.08);
+}
+
+.review-impact {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.impact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.impact-emoji {
+  font-size: 1.1rem;
+}
+
+.impact-item p {
+  font-size: 0.9rem;
+  color: var(--theme-text);
+  font-weight: 500;
+}
+
+.impact-text {
+  font-size: 0.8rem;
+  color: var(--theme-text);
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+.support-main-section .section-card {
+  background: rgba(57, 182, 179, 0.08);
+}
+
+.benefits-category {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.category-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--theme-text);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.category-subtitle {
+  font-size: 0.8rem;
+  color: var(--theme-text);
+  opacity: 0.7;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.benefit-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.benefit-content h4 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--theme-text);
+  margin-bottom: 3px;
+}
+
+.benefit-content p {
+  font-size: 0.75rem;
+  color: var(--theme-text);
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.faster-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.faster-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.faster-feature-icon {
+  font-size: 1rem;
+}
+
+.faster-feature-title {
+  font-size: 0.8rem;
+  color: var(--theme-text);
+}
+
+.support-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.review-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.25);
+}
+
+.review-btn:hover {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.35);
+}
+
+.paypal-btn {
+  background: linear-gradient(135deg, #39B6B3, #2E9E9B);
+  color: white;
+  box-shadow: 0 2px 12px rgba(57, 182, 179, 0.25);
+}
+
+.paypal-btn:hover {
+  box-shadow: 0 4px 16px rgba(57, 182, 179, 0.35);
+}
+
+.paypal-icon {
+  font-size: 1rem;
+}
+
+.support-cta {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.support-note {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--theme-text);
+  opacity: 0.6;
+}
+
+.review-note {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--theme-text);
+  opacity: 0.8;
+}
+
+.support-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--theme-text);
+  margin-bottom: 4px;
+}
+
+.footer-subtext {
+  font-size: 0.8rem;
+  color: var(--theme-text);
+  opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+  .support-container {
+    padding: 20px 12px 40px;
+  }
+
+  .support-title {
+    font-size: 1.4rem;
+  }
+
+  .support-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .section-card {
+    padding: 20px 16px;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .faster-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .support-btn {
+    width: 100%;
+  }
+}
+

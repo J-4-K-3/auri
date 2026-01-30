@@ -2,7 +2,7 @@
 .reviews-container {
   min-height: 100vh;
   padding: 60px 20px;
-  background: linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
 }
 
 .reviews-content {
@@ -16,14 +16,14 @@
 .reviews-content h1 {
   font-size: 42px;
   font-weight: 700;
-  color: white;
+  color: var(--theme-text);
   text-align: center;
 }
 
 .reviews-stats {
   text-align: center;
   padding: 32px;
-  background: var(--slate700);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
   border-radius: 16px;
   border: 1px solid rgba(255, 138, 101, 0.2);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -32,7 +32,7 @@
 .avg-rating h2 {
   font-size: 48px;
   font-weight: 700;
-  color: white;
+  color: var(--theme-text);
   margin: 0;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .reviews-stats p {
-  color: rgba(233, 236, 244, 0.72);
+  color: var(--theme-text);
   font-size: 14px;
   margin-top: 8px;
 }
@@ -73,7 +73,7 @@
 
 /* Review Form Styles */
 .review-form {
-  background: var(--slate700);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
   padding: 24px;
   border-radius: 16px;
   border: 1px solid rgba(233, 236, 244, 0.08);
@@ -86,7 +86,7 @@
 .review-form h3 {
   font-size: 20px;
   font-weight: 700;
-  color: white;
+  color: var(--theme-text);
   margin: 0;
 }
 
@@ -94,11 +94,11 @@
 .form-textarea,
 .form-select {
   padding: 12px 16px;
-  border: 1px solid rgba(233, 236, 244, 0.2);
+  border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
-  color: white;
-  background-color: rgba(15, 18, 32, 0.5);
+  color: var(--theme-text);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
   transition: all 0.2s ease;
 }
 
@@ -108,7 +108,7 @@
   outline: none;
   border-color: var(--peach);
   box-shadow: 0 0 0 3px rgba(255, 138, 101, 0.2);
-  background-color: rgba(15, 18, 32, 0.7);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
 }
 
 .form-textarea {
@@ -125,7 +125,7 @@
 
 .form-rating label {
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
   font-size: 14px;
 }
 
@@ -162,7 +162,7 @@
 
 .btn-cancel {
   background: rgba(233, 236, 244, 0.1);
-  color: white;
+  color: var(--theme-text);
 }
 
 .btn-cancel:hover:not(:disabled) {
@@ -192,7 +192,7 @@
 }
 
 .review-card {
-  background: var(--slate700);
+  background: var(--theme-background, linear-gradient(135deg, var(--slate800) 0%, #1a1f35 100%));
   padding: 20px;
   border-radius: 16px;
   border: 1px solid rgba(233, 236, 244, 0.08);
@@ -224,13 +224,13 @@
 .review-header h4 {
   font-size: 16px;
   font-weight: 700;
-  color: white;
+  color: var(--theme-text);
   margin: 0;
 }
 
 .verified-badge {
   background: linear-gradient(135deg, #f97316, #fb923c);
-  color: #fff;
+  color: var(--theme-text);
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -260,7 +260,7 @@
 
 .review-meta {
   font-size: 12px;
-  color: rgba(233, 236, 244, 0.5);
+  color: var(--theme-text);
   margin: 8px 0 0 0;
 }
 
@@ -280,7 +280,7 @@
 .review-action-btn {
   background: none;
   border: none;
-  color: rgba(233, 236, 244, 0.6);
+  color: var(--theme-text);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 6px;
@@ -307,7 +307,7 @@
 .reviews-empty {
   text-align: center;
   padding: 40px;
-  color: rgba(233, 236, 244, 0.6);
+  color: var(--theme-text);
   font-size: 16px;
 }
 
@@ -332,7 +332,7 @@
 
 .review-text {
   font-size: 16px;
-  color: rgba(233, 236, 244, 0.72);
+  color: var(--theme-text);
   line-height: 1.6;
   margin: 0;
 }
@@ -420,6 +420,7 @@
 
   .review-form h3 {
     font-size: 16px;
+    color: var(--theme-text);
   }
 
   .form-input,
@@ -500,7 +501,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--theme-text);
 }
 
 .edit-modal .form-rating {
@@ -511,7 +512,7 @@
 
 .edit-modal .form-rating label {
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
   font-size: 14px;
 }
 
@@ -520,7 +521,7 @@
   border: 1px solid rgba(233, 236, 244, 0.2);
   border-radius: 8px;
   font-size: 16px;
-  color: white;
+  color: var(--theme-text);
   background-color: rgba(15, 18, 32, 0.5);
   transition: all 0.2s ease;
 }
@@ -537,7 +538,7 @@
   border: 1px solid rgba(233, 236, 244, 0.2);
   border-radius: 8px;
   font-size: 16px;
-  color: white;
+  color: var(--theme-text);
   background-color: rgba(15, 18, 32, 0.5);
   font-family: inherit;
   resize: vertical;
@@ -571,7 +572,7 @@
 
 .edit-modal .btn-submit {
   background: linear-gradient(135deg, #FF8A65, #F76E8E);
-  color: white;
+  color: var(--theme-text);
 }
 
 .edit-modal .btn-submit:hover:not(:disabled) {
@@ -585,7 +586,7 @@
 
 .edit-modal .btn-cancel {
   background: rgba(233, 236, 244, 0.1);
-  color: white;
+  color: var(--theme-text);
 }
 
 .edit-modal .btn-cancel:hover:not(:disabled) {
