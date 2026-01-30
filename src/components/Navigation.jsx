@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar, FiSun } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar, FiGift } from 'react-icons/fi';
 import '../styles/Navigation.css';
 import ThemeSwitcherPopup from './ThemeSwitcherPopup';
 
@@ -55,7 +55,7 @@ export const Navigation = () => {
           onClick={() => setShowThemePopup(true)}
           aria-label="Switch theme"
         >
-          <FiSun size={20} color='#FF8A65' />
+          <FiGift size={20} color='#FF8A65' />
         </button>
         <button
           className="nav-toggle"
