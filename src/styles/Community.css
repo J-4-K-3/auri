@@ -95,7 +95,7 @@
   padding: 16px 12px 80px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 }
 
 /* Message Wrapper */

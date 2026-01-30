@@ -44,6 +44,7 @@ export const Community = () => {
   const [activeCategory, setActiveCategory] = useState('standard');
   const [activeReplies, setActiveReplies] = useState({});
   const [showReactionPicker, setShowReactionPicker] = useState(null);
+  const [showReactionBtn, setShowReactionBtn] = useState({}); // Track which messages show reaction button
   const [replyTexts, setReplyTexts] = useState({});
   const [replies, setReplies] = useState({}); // Store replies per messageId
   const [reactionUpdates, setReactionUpdates] = useState({}); // Track pending reaction updates for immediate UI feedback
@@ -105,12 +106,7 @@ export const Community = () => {
     }
   }, [isLoading]);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    if (messages.length > 0) {
-      scrollToBottom();
-    }
-  }, [messages]);
+  // Removed auto-scroll to bottom when new messages arrive - users can manually scroll
 
   // Close reaction picker when clicking outside
   useEffect(() => {
