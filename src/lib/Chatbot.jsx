@@ -913,7 +913,7 @@ const responsePatterns = [
       "Completely free! 🎉 No hidden costs, just pure Auri! 😊",
       "Free as in freedom! 🌟 Enjoy without worries!",
       "Zero cost! 💸 We believe in accessible social media!",
-      "Free forever! ✨ No subscriptions, no ads!",
+      "Free to use with optional subscriptions, and no ads!",
     ],
   },
   {
