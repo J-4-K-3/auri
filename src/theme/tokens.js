@@ -118,14 +118,14 @@ export const blushTheme = {
 };
 
 export const purpleTheme = {
-  background: '#2A1F3D',
+  background: '#9966CC', // #9966CC
   card: '#3A2E52',
   text: '#E8D5F2',
   subText: 'rgba(232, 213, 242, 0.72)',
   border: 'rgba(232, 213, 242, 0.15)',
   statusBar: 'light',
-  navBar: '#2A1F3D',
-  previewColor: '#2A1F3D',
+  navBar: '#9966CC',
+  previewColor: '#9966CC',
 };
 
 export const themeModeMap = {
