@@ -192,6 +192,33 @@
   color: var(--teal);
 }
 
+/* Developer author name with flowing gradient */
+.developer-author-name {
+  background: linear-gradient(
+    90deg,
+    #ff6b9d 0%,
+    #c44bff 25%,
+    #6b8aff 50%,
+    #44d4ff 75%,
+    #ff6b9d 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: flowingGradient 3s linear infinite;
+  font-weight: 700;
+}
+
+@keyframes flowingGradient {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 /* Bubble Content */
 .bubble-content {
   font-size: 15px;

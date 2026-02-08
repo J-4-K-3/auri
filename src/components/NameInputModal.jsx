@@ -6,6 +6,12 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
+  // Check if name contains "Auri Official" (reserved name)
+  const containsAuriOfficial = (nameToCheck) => {
+    const normalizedName = nameToCheck.toLowerCase().trim();
+    return normalizedName === "auri official";
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -23,6 +29,12 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
 
     if (trimmedName.length > 150) {
       setError("Name must be less than 150 characters");
+      return;
+    }
+
+    // Check for reserved name "Auri Official"
+    if (containsAuriOfficial(trimmedName)) {
+      setError('"Auri Official" is a reserved name and cannot be used');
       return;
     }
 
@@ -117,9 +129,9 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
                 <motion.button
                   type="submit"
                   className="save-btn"
-                  disabled={!name.trim()}
-                  whileHover={{ scale: name.trim() ? 1.02 : 1 }}
-                  whileTap={{ scale: name.trim() ? 0.98 : 1 }}
+                  disabled={!name.trim() || containsAuriOfficial(name)}
+                  whileHover={{ scale: name.trim() && !containsAuriOfficial(name) ? 1.02 : 1 }}
+                  whileTap={{ scale: name.trim() && !containsAuriOfficial(name) ? 0.98 : 1 }}
                 >
                   Join Community
                 </motion.button>

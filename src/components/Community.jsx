@@ -36,6 +36,17 @@ import {
 // Initialize dayjs plugins
 dayjs.extend(relativeTime);
 
+// Hardcoded developer names who get the " - Developer" tag
+const DEVELOPER_NAMES = ["Jacob Mon", "Alec Cy"];
+
+// Helper function to format author name with developer tag
+const formatAuthorName = (name) => {
+  if (DEVELOPER_NAMES.includes(name)) {
+    return `${name} - Developer`;
+  }
+  return name;
+};
+
 export const Community = () => {
   // State management
   const [messages, setMessages] = useState([]);
@@ -688,9 +699,13 @@ export const Community = () => {
                         <span className={`bubble-author-name ${
                           message.author === "Auri" || message.author === "Auri Official"
                             ? "auri-author-name"
-                            : ""
+                            : DEVELOPER_NAMES.includes(message.author)
+                              ? "developer-author-name"
+                              : ""
                         }`}>
-                          {message.author}
+                          {message.author === "Auri" || message.author === "Auri Official"
+                            ? message.author
+                            : formatAuthorName(message.author)}
                         </span>
                       </div>
                     )}
@@ -845,8 +860,14 @@ export const Community = () => {
                                       <FiUser size={10} />
                                     </div>
                                   )}
-                                  <span className="thread-author-name">
-                                    {reply.author}
+                                  <span className={`thread-author-name ${
+                                    DEVELOPER_NAMES.includes(reply.author)
+                                      ? "developer-author-name"
+                                      : ""
+                                  }`}>
+                                    {reply.author === "Auri" || reply.author === "Auri Official"
+                                      ? reply.author
+                                      : formatAuthorName(reply.author)}
                                   </span>
                                 </div>
                               )}
