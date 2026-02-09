@@ -16,6 +16,31 @@
   --link: #4D9CFF;
 }
 
+/* Message Theme Variables */
+:root {
+  /* Bot message colors */
+  --theme-message-bot: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  --theme-message-user: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Light Theme Message Colors */
+[data-theme="light"] {
+  --theme-message-bot: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  --theme-message-user: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Blush Theme Message Colors */
+[data-theme="blush"] {
+  --theme-message-bot: linear-gradient(135deg, #f8d7e8 0%, #f5c6d0 100%);
+  --theme-message-user: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Purple Theme Message Colors */
+[data-theme="purple"] {
+  --theme-message-bot: linear-gradient(135deg, #3A2E52 0%, #2D2350 100%);
+  --theme-message-user: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
 * {
   margin: 0;
   padding: 0;

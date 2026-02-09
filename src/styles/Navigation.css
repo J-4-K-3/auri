@@ -233,60 +233,143 @@
   color: var(--theme-text);
 }
 
-/* Bottom Navigation */
+/* Bottom Navigation - Fixed Pill at Bottom */
 .bottom-nav {
   display: none;
   position: fixed;
-  right: 20px;
-  top: 30%;
-  transform: translateY(-50%);
-  width: 50px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--theme-navBar, var(--slate700));
   border: 1px solid var(--theme-border, rgba(233, 236, 244, 0.08));
-  padding: 12px 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  flex-direction: column;
+  z-index: 1100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  border-radius: 25px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  gap: 4px;
+  border-radius: 16px;
+  padding: 8px 12px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Collapsed state - circular FAB */
+.bottom-nav.collapsed {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  padding: 0;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Expanded state - pill with items */
+.bottom-nav.expanded {
+  width: auto;
+  min-width: 260px;
+  max-width: calc(100vw - 32px);
+  padding: 6px 10px;
+  gap: 4px;
 }
 
 .bottom-nav-link {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
   color: var(--theme-text);
   text-decoration: none;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
-  padding: 12px 8px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
   transition: all 0.3s ease;
-  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.bottom-nav-link:hover {
-  color: var(--theme-text);
-  background: rgba(255, 138, 101, 0.06);
+.bottom-nav-link svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease;
 }
 
-.bottom-nav-link.active {
+.nav-label {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* When collapsed, hide labels and style as FAB */
+.bottom-nav.collapsed .bottom-nav-link {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bottom-nav.collapsed .fab-trigger {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bottom-nav.expanded .fab-trigger {
+  display: none;
+}
+
+.fab-trigger {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF8A65, #F76E8E);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(247, 110, 142, 0.4);
+}
+
+.fab-trigger:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(247, 110, 142, 0.5);
+}
+
+.fab-trigger:active {
+  transform: scale(0.95);
+}
+
+.fab-trigger svg {
+  color: white;
+  width: 24px;
+  height: 24px;
+}
+
+/* Bottom nav items styling */
+.bottom-nav.expanded .bottom-nav-link:hover {
+  background: rgba(255, 138, 101, 0.1);
+}
+
+.bottom-nav.expanded .bottom-nav-link.active {
   color: #FF8A65;
   font-weight: 600;
 }
 
-.bottom-nav-link.active svg {
+.bottom-nav.expanded .bottom-nav-link.active svg {
   color: var(--blush);
 }
 
-.bottom-nav-link svg {
-  transition: color 0.3s ease;
-}
-
+/* Media query for mobile */
 @media (max-width: 768px) {
   .bottom-nav {
     display: flex;
@@ -300,12 +383,58 @@
     display: none;
   }
 
-  /* Hide labels on small screens - icon only */
-  .bottom-nav-link .nav-label {
-    display: none;
+  .bottom-nav.expanded {
+    min-width: 240px;
+    max-width: calc(100vw - 24px);
   }
 
   .bottom-nav-link {
-    padding: 16px 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .bottom-nav-link svg {
+    width: 18px;
+    height: 18px;
   }
 }
+
+@media (max-width: 480px) {
+  .bottom-nav {
+    bottom: 16px;
+  }
+
+  .bottom-nav.expanded {
+    bottom: 16px;
+    min-width: auto;
+    max-width: calc(100vw - 20px);
+    padding: 6px 8px;
+    gap: 2px;
+  }
+
+  .bottom-nav-link {
+    padding: 8px 8px;
+    font-size: 11px;
+  }
+
+  .bottom-nav-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .bottom-nav.collapsed {
+    width: 48px;
+    height: 48px;
+  }
+
+  .fab-trigger {
+    width: 48px;
+    height: 48px;
+  }
+
+  .fab-trigger svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+

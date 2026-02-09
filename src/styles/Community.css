@@ -92,7 +92,7 @@
 .chat-messages-area {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 12px 90px;
+  padding: 20px 12px 140px;
   display: flex;
   flex-direction: column;
   gap: 30px;

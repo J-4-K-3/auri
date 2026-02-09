@@ -152,7 +152,6 @@ export const Home = () => {
       >
         <motion.div className="home-content" variants={itemVariants}>
           {/* Chatbot Section */}
-          <p className="speak-auri">Talk to Auri</p>
           <motion.div className="chatbot-section" variants={itemVariants} style={{ minHeight: '100vh', position: 'relative' }}>
             <Chatbot />
           </motion.div>

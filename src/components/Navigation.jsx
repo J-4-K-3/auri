@@ -1,38 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar, FiSun, FiGift } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiUsers, FiFileText, FiStar, FiSun, FiGift, FiPlus } from 'react-icons/fi';
 import '../styles/Navigation.css';
 import ThemeSwitcherPopup from './ThemeSwitcherPopup';
 
 export const Navigation = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showBottomNav, setShowBottomNav] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showThemePopup, setShowThemePopup] = useState(false);
   const lastScrollY = useRef(0);
+  const scrollTimeoutRef = useRef(null);
+
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+    const scrollDelta = currentScrollY - lastScrollY.current;
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    if (scrollDelta > 5 && !isCollapsed && currentScrollY > 50) {
+      setIsCollapsed(true);
+    } else if (scrollDelta < -5 && isCollapsed) {
+      setIsCollapsed(false);
+    } else if (currentScrollY < 50 && isCollapsed) {
+      setIsCollapsed(false);
+    }
+
+    lastScrollY.current = currentScrollY;
+
+    scrollTimeoutRef.current = setTimeout(() => {
+    }, 150);
+  }, [isCollapsed]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY.current) {
-        // Scrolling down - hide bottom nav
-        setShowBottomNav(false);
-      } else {
-        // Scrolling up - show bottom nav
-        setShowBottomNav(true);
-      }
-      
-      lastScrollY.current = currentScrollY;
-    };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
-  }, []);
+  }, [handleScroll]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -55,7 +67,7 @@ export const Navigation = () => {
           onClick={() => setShowThemePopup(true)}
           aria-label="Switch theme"
         >
-          <FiSun size={20} color='#FF8A65' />
+          <FiSun size={20} color="#FF8A65" />
         </button>
         <button
           className="nav-toggle"
@@ -114,31 +126,50 @@ export const Navigation = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showBottomNav && (
-          <motion.div
-            className="bottom-nav"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            transition={{ duration: 0.3 }}
-          >
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`bottom-nav-link ${isActive(item.path) ? 'active' : ''}`}
-                >
-                  <Icon size={20} />
-                  <span className="nav-label">{item.label}</span>
-                </Link>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <motion.div
+        className={`bottom-nav ${isCollapsed ? 'collapsed' : 'expanded'}`}
+        onClick={() => {
+          if (isCollapsed) setIsCollapsed(false);
+        }}
+        initial={false}
+        animate={{
+          width: isCollapsed ? 56 : 'auto',
+          height: isCollapsed ? 56 : 'auto',
+          borderRadius: isCollapsed ? 50 : 16,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+        }}
+      >
+        <motion.button
+          className="fab-trigger"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsCollapsed(false);
+          }}
+        >
+          <FiPlus size={24} />
+        </motion.button>
+
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`bottom-nav-link ${isActive(item.path) ? 'active' : ''}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon size={20} />
+              <span className="nav-label">{item.label}</span>
+            </Link>
+          );
+        })}
+      </motion.div>
 
       <ThemeSwitcherPopup
         isVisible={showThemePopup}
@@ -147,3 +178,4 @@ export const Navigation = () => {
     </nav>
   );
 };
+

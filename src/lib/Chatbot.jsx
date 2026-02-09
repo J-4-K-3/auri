@@ -1,6 +1,27 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageTextRenderer } from "../components/EmojiRenderer";
+import { MessageTextRenderer, EmojiImage } from "../components/EmojiRenderer";
+import {
+  extractEmojiFromText,
+  DEFAULT_EMOJI,
+  ALPHABET,
+  ALPHABET_LOWER,
+  DAYS_OF_WEEK,
+  MONTHS_OF_YEAR,
+  NUMBERS,
+  CONTINENTS,
+  OCEANS,
+  PLANETS,
+  RAINBOW_COLORS,
+  BASIC_COLORS,
+  JOKES,
+  WOULD_YOU_RATHER_RESPONSES,
+  GAMING_KNOWLEDGE,
+  CODING_KNOWLEDGE,
+  BOT_KNOWLEDGE,
+  IMPOSSIBLE_QUESTIONS,
+  CLARIFICATION_HELPERS,
+} from "../bot/data";
 
 // Intent priority levels (higher = more specific = checked first)
 const INTENT_PRIORITY = {
@@ -62,9 +83,16 @@ const INTENT_PRIORITY = {
   // Lower priority - General
   EXPLORING: 60,
   EMOTIONAL_SUPPORT: 55,
+  COMPLIMENT: 56,
+  PERSONALITY_QUESTION: 55,
   JOKE: 55,
   LAUGHTER: 55,
   APP_NEW: 50,
+  TRAVEL_DESTINATION: 62,
+  HEALTH_MEDICINE: 60,
+  CELEBRITY_KNOWLEDGE: 50,
+  CONTACT_SUPPORT: 65,
+  TECHNICAL_EXPLANATION: 63,
 
   // Follow-up patterns
   FOLLOW_UP_WHY: 45,
@@ -80,6 +108,40 @@ const INTENT_PRIORITY = {
   // Platform questions
   IOS_INFO: 25,
   WEB_INFO: 25,
+
+  // General Knowledge (High priority - accurate answers)
+  ALPHABET: 82,
+  NUMBERS_SEQUENCE: 82,
+  MONTHS: 82,
+  DAYS_OF_WEEK: 82,
+  PLANETS: 82,
+  CONTINENTS: 82,
+  OCEANS: 82,
+  RAINBOW_COLORS: 82,
+  COLORS: 80,
+
+  // Math & Calculations (High priority - factual)
+  MATH_SIMPLE: 81,
+  MATH_QUESTION: 78,
+  UNIT_CONVERSION: 78,
+
+  // Jokes & Humor (Medium priority)
+  JOKE_ANIMAL: 58,
+  JOKE_PROGRAMMING: 58,
+  JOKE_GENERAL: 58,
+  WOULD_YOU_RATHER: 56,
+
+  // Gaming & Tech Knowledge (Medium priority)
+  GAMING_MINECRAFT: 60,
+  GAMING_KNOWLEDGE: 58,
+  CODING_KNOWLEDGE: 60,
+  CODING_QUESTION: 60,
+
+  // Bot Self-Awareness (Medium priority)
+  BOT_SMARTNESS: 57,
+  BOT_CAPABILITIES: 57,
+  BOT_LANGUAGES: 57,
+  BOT_HOW_WORKS: 57,
 };
 
 // Deduplicate intent detection - detect all, pick highest priority
@@ -92,14 +154,20 @@ const detectIntent = (msg) => {
     // Only trigger for clear self-introductions, not random questions
     () => {
       if (
-        /\b(my.*name.*is|i.*am|i'm)\b/i.test(lowerMsg) &&
+        /\b(my.*name.*is|i.*am|i'm|call me|they call me|you can call me)\b/i.test(lowerMsg) &&
         /\b[a-zA-Z]+\b/.test(lowerMsg)
       ) {
         const nameMatch =
           lowerMsg.match(/\bmy name is ([a-zA-Z]+)\b/i) ||
           lowerMsg.match(/\bi am ([a-zA-Z]+)\b/i) ||
-          lowerMsg.match(/\bi'm ([a-zA-Z]+)\b/i);
-        if (nameMatch && nameMatch[1].length > 1) {
+          lowerMsg.match(/\bi'm ([a-zA-Z]+)\b/i) ||
+          lowerMsg.match(/\bcall me ([a-zA-Z]+)\b/i) ||
+          lowerMsg.match(/\bthey call me ([a-zA-Z]+)\b/i) ||
+          lowerMsg.match(/\byou can call me ([a-zA-Z]+)\b/i);
+        
+        // Only accept if name matches (must be 2+ chars and not be a common word like "hungry", "sad", etc.)
+        const commonFalsePositives = ["hungry", "sad", "happy", "tired", "sick", "busy", "ready", "ending", "done", "talking"];
+        if (nameMatch && nameMatch[1].length > 2 && !commonFalsePositives.includes(nameMatch[1].toLowerCase())) {
           return "USER_NAME";
         }
       }
@@ -660,6 +728,352 @@ const detectIntent = (msg) => {
       }
       return null;
     },
+
+    // ============================================================
+    // GENERAL KNOWLEDGE INTENTS
+    // ============================================================
+
+    // Alphabet
+    () => {
+      if (
+        /\b(alphabet|letters|a.*b.*c|spell.*alphabet|tell.*letters)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "ALPHABET";
+      }
+      return null;
+    },
+
+    // Numbers sequence
+    () => {
+      if (
+        /\b(count.*to|numbers|number.*sequence|1.*2.*3|123|counting)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "NUMBERS_SEQUENCE";
+      }
+      return null;
+    },
+
+    // Months of the year
+    () => {
+      if (
+        /\b(months|list.*months|all.*months|12.*months|months.*of.*year)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "MONTHS";
+      }
+      return null;
+    },
+
+    // Days of the week
+    () => {
+      if (
+        /\b(days|list.*days|days.*of.*week|7.*days|monday|tuesday|wednesday)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "DAYS_OF_WEEK";
+      }
+      return null;
+    },
+
+    // Planets
+    () => {
+      if (
+        /\b(planets|solar.*system|how.*many.*planets|list.*planets|planet.*names)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "PLANETS";
+      }
+      return null;
+    },
+
+    // Continents
+    () => {
+      if (
+        /\b(continents|how.*many.*continents|list.*continents|continent.*names)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "CONTINENTS";
+      }
+      return null;
+    },
+
+    // Oceans
+    () => {
+      if (
+        /\b(oceans|how.*many.*oceans|list.*oceans|ocean.*names)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "OCEANS";
+      }
+      return null;
+    },
+
+    // Rainbow colors
+    () => {
+      if (/\b(rainbow.*colors|colors.*rainbow|roygbiv)\b/i.test(lowerMsg)) {
+        return "RAINBOW_COLORS";
+      }
+      return null;
+    },
+
+    // Colors
+    () => {
+      if (/\b(colors|list.*colors|basic.*colors)\b/i.test(lowerMsg)) {
+        return "COLORS";
+      }
+      return null;
+    },
+
+    // ============================================================
+    // MATH & CALCULATIONS
+    // ============================================================
+
+    // Simple math questions (addition, subtraction, multiplication, division)
+    () => {
+      if (
+        /\b(what.*is|calculate|how.*much|solve)\b.*(\d+\s*[\+\-\*\/]\s*\d+|[0-9].*(?:\+|-|\*|÷|\/|divided|plus|minus|times|multiplied))/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "MATH_SIMPLE";
+      }
+      // Catch common simple math
+      if (/\b(2.*\+.*2|5.*\+.*3|10.*-.*3|3.*\*.*4|math|arithmetic)\b/i.test(lowerMsg)) {
+        return "MATH_SIMPLE";
+      }
+      return null;
+    },
+
+    // Math questions (general)
+    () => {
+      if (
+        /\b(math|formula|equation|calculate|conversion|percent)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "MATH_QUESTION";
+      }
+      return null;
+    },
+
+    // Unit conversion
+    () => {
+      if (
+        /\b(convert|cm.*meter|mile.*km|kilogram|gram|pound|ounce|inch|foot)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "UNIT_CONVERSION";
+      }
+      return null;
+    },
+
+    // ============================================================
+    // JOKES & HUMOR
+    // ============================================================
+
+    // Animal jokes - especially cow with no legs
+    () => {
+      if (
+        /\b(cow.*no.*legs|no.*legs.*cow|ground.*beef|animal.*joke|what.*do.*you.*call)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "JOKE_ANIMAL";
+      }
+      return null;
+    },
+
+    // Programming jokes
+    () => {
+      if (
+        /\b(programmer.*joke|coding.*joke|java.*developer|debug|syntax|error)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "JOKE_PROGRAMMING";
+      }
+      return null;
+    },
+
+    // Would you rather
+    () => {
+      if (/\b(would.*you.*rather|choose.*or|pick.*one)\b/i.test(lowerMsg)) {
+        return "WOULD_YOU_RATHER";
+      }
+      return null;
+    },
+
+    // General joke request
+    () => {
+      if (
+        /\b(tell.*joke|joke|funny|make.*laugh|laugh|haha|tell.*something.*funny)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "JOKE_GENERAL";
+      }
+      return null;
+    },
+
+    // ============================================================
+    // GAMING & TECH KNOWLEDGE
+    // ============================================================
+
+    // Minecraft specifically
+    () => {
+      if (/\b(minecraft|do.*you.*know.*minecraft|ever.*played.*minecraft)\b/i.test(lowerMsg)) {
+        return "GAMING_MINECRAFT";
+      }
+      return null;
+    },
+
+    // Gaming knowledge (general)
+    () => {
+      if (
+        /\b(gaming|video.*game|game|roblox|fortnite|mlbb|play.*game|gamer)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "GAMING_KNOWLEDGE";
+      }
+      return null;
+    },
+
+    // Coding knowledge - specific question
+    () => {
+      if (
+        /\b(do.*you.*know.*how.*to.*code|can.*you.*code|coding|do.*you.*code|programming)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "CODING_KNOWLEDGE";
+      }
+      return null;
+    },
+
+    // Coding question (general)
+    () => {
+      if (
+        /\b(code|javascript|react|python|html|css|developer|software|engineer)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "CODING_QUESTION";
+      }
+      return null;
+    },
+
+    // ============================================================
+    // BOT SELF-AWARENESS
+    // ============================================================
+
+    // Are you smart / smartness
+    () => {
+      if (/\b(are.*you.*smart|smart|intelligent|iq|genius)\b/i.test(lowerMsg)) {
+        return "BOT_SMARTNESS";
+      }
+      return null;
+    },
+
+    // What can you do / capabilities
+    () => {
+      if (
+        /\b(what.*can.*you.*do|capabilities|can.*you|what.*can.*i|features.*you)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "BOT_CAPABILITIES";
+      }
+      return null;
+    },
+
+    // Languages you know
+    () => {
+      if (
+        /\b(languages.*you.*know|what.*languages|speak|language|multilingual)\b/i.test(
+          lowerMsg,
+        )
+      ) {
+        return "BOT_LANGUAGES";
+      }
+      return null;
+    },
+
+    // How do you work / how do you function
+    () => {
+      if (/\b(how.*do.*you.*work|how.*do.*you.*function|how.*you.*built)\b/i.test(lowerMsg)) {
+        return "BOT_HOW_WORKS";
+      }
+      return null;
+    },
+
+    // Compliments and personality questions
+    () => {
+      if (/\b(adorable|cute|smart|funny|cool|awesome|amazing|great|beautiful|pretty|nice|sweet|kind|lovely|wonderful)\b/i.test(lowerMsg) && 
+          /\b(you|auri|this|that)\b/i.test(lowerMsg)) {
+        return "COMPLIMENT";
+      }
+      return null;
+    },
+
+    // Personality & existence questions
+    () => {
+      if (/\b(are you|do you|what are you|favorite|like|prefer|think about|your.*opinion|personality)\b/i.test(lowerMsg)) {
+        return "PERSONALITY_QUESTION";
+      }
+      return null;
+    },
+
+    // Travel & Geography
+    () => {
+      if (/\b(best.*place.*travel|travel|country|city|destination|where.*go|visit|vacation|trip)\b/i.test(lowerMsg)) {
+        return "TRAVEL_DESTINATION";
+      }
+      return null;
+    },
+
+    // Health & Medicine
+    () => {
+      if (/\b(medicine|doctor|health|sick|illness|disease|medical|hospital|treatment|symptom|disease)\b/i.test(lowerMsg)) {
+        return "HEALTH_MEDICINE";
+      }
+      return null;
+    },
+
+    // Celebrity & Famous People Knowledge
+    () => {
+      if (/\b(elon|musk|taylor|swift|cardi|beyonce|celebrity|actor|singer|famous|know about)\b/i.test(lowerMsg)) {
+        return "CELEBRITY_KNOWLEDGE";
+      }
+      return null;
+    },
+
+    // Contact & Support
+    () => {
+      if (/\b(contact|reach|support|help|feedback|bug|issue|problem|report|developer|jacob|innoxation)\b/i.test(lowerMsg) &&
+          /\b(how|where|can|send|tell|email|phone)\b/i.test(lowerMsg)) {
+        return "CONTACT_SUPPORT";
+      }
+      return null;
+    },
+
+    // Technical Explanation (built with, what language, etc)
+    () => {
+      if (/\b(built with|built.*with|what.*language|framework|technology|code|javascript|python|what do you mean)\b/i.test(lowerMsg)) {
+        return "TECHNICAL_EXPLANATION";
+      }
+      return null;
+    },
   ];
 
   // Collect all matches and pick highest priority
@@ -677,6 +1091,251 @@ const detectIntent = (msg) => {
     return matches[0].intent;
   }
 
+  return null;
+};
+
+// Function to detect emotion/keyword from user message and return appropriate emoji
+const detectUserEmotion = (userMessage) => {
+  const lowerMsg = userMessage.toLowerCase();
+
+  // ============================================================
+  // POSITIVE/HAPPY KEYWORDS
+  // ============================================================
+
+  // Greetings
+  if (/\b(hello|hey|hi|howdy|hiya|sup|yo|greetings|salutations|what.*up)\b/i.test(lowerMsg)) {
+    return "grinning_face_with_smiling_eyes_3d";
+  }
+
+  // How are you variants
+  if (/\b(how.*are.*you|how.*going|how.*doing|what.*up|sup|wassup|how.*you|how.*been)\b/i.test(lowerMsg)) {
+    return "slightly_smiling_face_3d";
+  }
+
+  // Morning greetings
+  if (/\b(good.*morning|morning|mornin|wake.*up|early|sunrise)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_smiling_eyes_3d";
+  }
+
+  // Evening/Night greetings
+  if (/\b(good.*evening|evening|good.*night|night|sunset|dusk|bedtime)\b/i.test(lowerMsg)) {
+    return "relieved_face_3d";
+  }
+
+  // Gratitude
+  if (/\b(thanks|thank.*you|thx|ty|appreciate|appreciated|grateful|gratitude|ty|much.*thanks|thanks.*much)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_hearts_3d";
+  }
+
+  // Affirmative responses
+  if (/\b(yes|yeah|yep|sure|ok|okay|alright|yup|affirmative|definitely|absolutely|certainly|absolutely|of.*course|for.*sure)\b/i.test(lowerMsg)) {
+    return "beaming_face_with_smiling_eyes_3d";
+  }
+
+  // Admiration/Love
+  if (/\b(love|beautiful|pretty|gorgeous|amazing|awesome|great|fantastic|wonderful|excellent|superb|marvelous|incredible|stunning|spectacular|fabulous|divine|perfect|brilliant|outstanding|remarkable)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_heart-eyes_3d";
+  }
+
+  // Fun/Enjoyment
+  if (/\b(fun|enjoyable|enjoying|enjoy|exciting|cool|nice|sweet|delightful|pleasant|charming|lovely|delicious|yummy|scrumptious)\b/i.test(lowerMsg)) {
+    return "face_with_tongue_3d";
+  }
+
+  // Happiness/Joy
+  if (/\b(happy|joyful|excited|glad|pleased|blissful|cheerful|elated|thrilled|delighted|overjoyed|ecstatic|giddy|euphoric|radiant)\b/i.test(lowerMsg)) {
+    return "grinning_face_with_big_eyes_3d";
+  }
+
+  // Enthusiasm/Energy
+  if (/\b(awesome|great|cool|dope|sick|fire|lit|slay|killing.*it|crushing.*it|nailed.*it|awesome|epic|bomb)\b/i.test(lowerMsg)) {
+    return "partying_face_3d";
+  }
+
+  // Confidence
+  if (/\b(confident|confident|sure|assured|trust|believe|positive|optimistic|bullish|determined|motivated|driven)\b/i.test(lowerMsg)) {
+    return "star_struck_3d";
+  }
+
+  // Curiosity/Interest
+  if (/\b(interesting|intrigued|curious|wonder|wondering|fascinated|captivated|enthralled|mesmerized)\b/i.test(lowerMsg)) {
+    return "thinking_face_3d";
+  }
+
+  // ============================================================
+  // NEGATIVE/SAD KEYWORDS
+  // ============================================================
+
+  // Sadness
+  if (/\b(sad|depressed|unhappy|down|blue|melancholy|heartbroken|heartbroken|gloomy|dismal|sorrowful|miserable|downhearted|forlorn|dejected)\b/i.test(lowerMsg)) {
+    return "crying_face_3d";
+  }
+
+  // Hatred/Dislike
+  if (/\b(hate|dislike|despise|loathe|detest|abhor|can't.*stand|dislike|gross|yuck|ew|eww|disgusting|repulsive|revolting)\b/i.test(lowerMsg)) {
+    return "angry_face_3d";
+  }
+
+  // Disappointment
+  if (/\b(bad|terrible|awful|horrible|sucks|worst|disappointing|disappointed|let.*down|underwhelming|mediocre|poor|subpar|lame|sucky|rubbish|ruined)\b/i.test(lowerMsg)) {
+    return "disappointed_face_3d";
+  }
+
+  // Anger/Rage
+  if (/\b(angry|mad|pissed|irritated|furious|enraged|livid|seething|irate|incensed|outraged|wrathful|infuriated)\b/i.test(lowerMsg)) {
+    return "face_with_steam_from_nose_3d";
+  }
+
+  // Fear/Scared
+  if (/\b(scared|afraid|fear|terrified|frightened|horrified|petrified|panicked|alarmed|anxious|dread|dreading|worried|concerned)\b/i.test(lowerMsg)) {
+    return "fearful_face_3d";
+  }
+
+  // Confusion
+  if (/\b(confused|puzzled|lost|bewildered|perplexed|baffled|stumped|mystified|disoriented|unclear|huh|what|eh|pardon|say.*again|come.*again)\b/i.test(lowerMsg)) {
+    return "thinking_face_3d";
+  }
+
+  // Surprise/Shock
+  if (/\b(surprised|shocked|amazed|astonished|astounded|stunned|gobsmacked|flabbergasted|wow|whoa|woah|whew|no.*way|no.*way|seriously|really|omg|oh.*my|oh.*god)\b/i.test(lowerMsg)) {
+    return "astonished_face_3d";
+  }
+
+  // Skepticism/Doubt
+  if (/\b(skeptical|doubt|doubtful|suspicious|uncertain|unconvinced|hmm|hmph|really|sure.*about|not.*so.*sure|skeptical|doubtful)\b/i.test(lowerMsg)) {
+    return "face_with_raised_eyebrow_3d";
+  }
+
+  // Jealousy/Envy
+  if (/\b(jealous|envious|envying|wishing|wish.*i|wish.*i.*had|why.*not.*me|unfair|unfairly)\b/i.test(lowerMsg)) {
+    return "unamused_face_3d";
+  }
+
+  // Stress/Anxiety
+  if (/\b(stressed|anxious|worried|nervous|tense|on.*edge|jittery|unsettled|uneasy|troubled|bothered|frazzled|overwhelmed|panic|panicking)\b/i.test(lowerMsg)) {
+    return "anxious_face_with_sweat_3d";
+  }
+
+  // Tiredness/Fatigue
+  if (/\b(tired|exhausted|fatigued|weary|sleepy|sleek|drowsy|drained|worn.*out|beat|knackered|pooped|wiped|yawning)\b/i.test(lowerMsg)) {
+    return "tired_face_3d";
+  }
+
+  // Frustration
+  if (/\b(frustrated|frustrating|annoyed|annoying|irritating|bothersome|maddening|exasperating|grrr|ugh|argh|aargh|darn|shoot|crap)\b/i.test(lowerMsg)) {
+    return "face_with_steam_from_nose_3d";
+  }
+
+  // Sarcasm/Mocking
+  if (/\b(yeah.*right|sure.*jan|right.*sure|yeah.*sure|fat.*chance|good.*luck|yeah.*okay|sarcasm|sarcastic|mock|mocking|yeah.*right)\b/i.test(lowerMsg)) {
+    return "smirking_face_3d";
+  }
+
+  // Disgust
+  if (/\b(gross|yuck|ew|eww|disgusting|repulsive|revolting|vile|nasty|filthy|icky|yucky|blegh|blech)\b/i.test(lowerMsg)) {
+    return "nauseated_face_3d";
+  }
+
+  // ============================================================
+  // NEUTRAL/OTHER KEYWORDS
+  // ============================================================
+
+  // Goodbye/Farewell
+  if (/\b(bye|goodbye|see.*you|later|bye.*bye|cya|take.*care|farewell|adios|cheerio|tata|see.*ya|catch.*you|until.*then|peace.*out)\b/i.test(lowerMsg)) {
+    return "waving_hand_3d";
+  }
+
+  // Apology
+  if (/\b(sorry|apologize|my.*bad|oops|my.*fault|excuse.*me|pardon.*me|forgive.*me|apologies|regret|regretful|my.*mistake)\b/i.test(lowerMsg)) {
+    return "pleading_face_3d";
+  }
+
+  // Polite request
+  if (/\b(please|pls|plz|pretty.*please|would.*you|could.*you|might.*you|can.*you.*please|if.*you.*don't.*mind)\b/i.test(lowerMsg)) {
+    return "smiling_face_3d";
+  }
+
+  // Negative response
+  if (/\b(no|nope|nah|not.*really|not.*at.*all|no.*way|no.*chance|absolutely.*not|never|nah.*man|nope.*nope)\b/i.test(lowerMsg)) {
+    return "neutral_face_3d";
+  }
+
+  // Uncertainty/Hesitation
+  if (/\b(maybe|perhaps|possibly|might|could|uncertain|undecided|not.*sure|unsure|toss.*up|either.*way|whatever|idk|dunno|don't.*know|beats.*me)\b/i.test(lowerMsg)) {
+    return "thinking_face_3d";
+  }
+
+  // Laughter/Humor
+  if (/\b(haha|hahaha|hehe|lol|lmao|rofl|rotfl|funny|hilarious|comedy|comedic|ha.*ha|hehe|chuckle|giggle|laugh)\b/i.test(lowerMsg)) {
+    return "rolling_on_the_floor_laughing_3d";
+  }
+
+  // Relaxation/Contentment
+  if (/\b(relaxing|relax|chill|chillin|chilling|peaceful|peaceful|calm|calming|serene|tranquil|mellow|laid.*back)\b/i.test(lowerMsg)) {
+    return "relieved_face_3d";
+  }
+
+  // Confidence/Pride
+  if (/\b(confident|proud|proudly|pride|arrogant|cocky|smug|boastful|bragging|showing.*off|look.*at.*me)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_sunglasses_3d";
+  }
+
+  // Cute/Affectionate
+  if (/\b(cute|adorable|aww|sweet|sweetie|honey|dear|love|lovely|precious|treasure|puppy|baby|babe)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_hearts_3d";
+  }
+
+  // Flirtation/Playfulness
+  if (/\b(wink|winking|flirt|flirting|playful|teasing|tease|cheeky|mischievous|naughty|wink.*wink|nudge.*nudge)\b/i.test(lowerMsg)) {
+    return "winking_face_3d";
+  }
+
+  // Thoughtfulness/Deep thinking
+  if (/\b(thinking|ponder|pondering|contemplate|contemplating|consider|considering|reflect|reflecting|philosophical|profound)\b/i.test(lowerMsg)) {
+    return "thinking_face_3d";
+  }
+
+  // Determination/Motivation
+  if (/\b(determined|determined|motivated|motivation|focus|focused|driven|pushing|pushing.*through|determined|resolved)\b/i.test(lowerMsg)) {
+    return "flexed_biceps_3d";
+  }
+
+  // Success/Victory
+  if (/\b(won|win|winning|victory|victory|success|successful|achieved|nailed.*it|crushed.*it|killed.*it|passed|passed.*test|aced)\b/i.test(lowerMsg)) {
+    return "hundred_points_3d";
+  }
+
+  // Celebration
+  if (/\b(celebrate|celebrating|celebration|party|partying|woohoo|yay|yaaaay|celebrate|cheers|congrats|congratulations)\b/i.test(lowerMsg)) {
+    return "partying_face_3d";
+  }
+
+  // Love/Affection (romantic)
+  if (/\b(love.*you|love.*u|miss.*you|miss.*u|crush|heart.*you|adore|adoring|enamored|smitten|sweet.*on)\b/i.test(lowerMsg)) {
+    return "smiling_face_with_heart-eyes_3d";
+  }
+
+  // Admiration
+  if (/\b(admire|admiration|respect|respecting|look.*up.*to|inspire|inspiring|inspiration|impressive|astounding|remarkable)\b/i.test(lowerMsg)) {
+    return "star_struck_3d";
+  }
+
+  // Helpfulness
+  if (/\b(help|helping|help.*me|can.*you.*help|need.*help|assist|assisting|support|supporting)\b/i.test(lowerMsg)) {
+    return "raising_hands_3d";
+  }
+
+  // Agreement
+  if (/\b(agree|agreed|totally|exactly|right|absolutely|definitely|for.*sure|100|percent|completely|entirely|precisely)\b/i.test(lowerMsg)) {
+    return "clapping_hands_3d";
+  }
+
+  // Enthusiasm
+  if (/\b(yay|woohoo|yes|let.*go|let's.*go|let's.*do|let's.*start|bring.*it.*on|bring.*it|let's.*begin|ready)\b/i.test(lowerMsg)) {
+    return "partying_face_3d";
+  }
+
+  // Default if no match
   return null;
 };
 
@@ -776,7 +1435,7 @@ const responsePatterns = [
       "Awesome! 🌟 Are you just browsing or interested in what we do... either way we're good to have you here",
       "Perfect! 😌 How can I help?",
       "Excellent! ✨ Tell me more what you like about Auri so far",
-      "Wonderful to hear, is there anything I can help you with... Um you person 😅",
+      "Wonderful to hear! 😊 Is there anything else you'd like to know about Auri?",
     ],
   },
   {
@@ -1892,8 +2551,8 @@ const responsePatterns = [
     regex:
       /\b(best.*part|best.*feature|what.*best|favorite.*part|love.*most|highlight|best.*thing|what.*do.*you.*like)\b/i,
     responses: [
-      "In my opinion, the best part of Auri is the Moments section! 📸✨ It's where users capture and share real, authentic moments! 🕊️\n\nIt's currently under development but when it's ready, it'll be amazing! 🔥💫\n\nThink of it as your personal space to share life's special moments with your circle! 📱❤️\n\n(That's a little spoiler from me! 😉)",
-      "The Moments section inside Auri is going to be something special! 🌟📸\n\nMy personal favorite feature! 💖 It's designed for sharing genuine, real moments with your community! 🕊️\n\nCurrently under development, but trust me - it's worth the wait! 🔥✨\n\nStay tuned for the release! 🚀",
+      "In my opinion, the best part of Auri is the Moments section! 📸✨ It's where users capture and share real, authentic moments with their circle! 🕊️ It's currently under development but when it's ready, it'll be an amazing way to share life's special moments! 🔥💫 (That's a little spoiler from me! 😉)",
+      "The Moments section inside Auri is going to be something special! 🌟📸 It's my personal favorite feature! 💖 It's designed for sharing genuine, real moments with your community in a peaceful way! 🕊️ Currently under development, but trust me - it's worth the wait! 🔥✨ Stay tuned for the release! 🚀",
     ],
   },
   {
@@ -1943,13 +2602,354 @@ const responsePatterns = [
       "No pressure! 🙌 Browsing is how many people discover Auri! 🔍✨\n\nWe're glad you're here! 💖 Take your time exploring! ⏰\n\nQuestions about features, themes, or anything else? Just ask! 💬😊",
     ],
   },
+
+  // ============================================================
+  // GENERAL KNOWLEDGE RESPONSES
+  // ============================================================
+
+  // Alphabet
+  {
+    regex: /\b(alphabet|letters|a.*b.*c|spell.*alphabet|tell.*letters)\b/i,
+    responses: [
+      `🔤 Here's the alphabet: ${ALPHABET} - There are 26 letters in the English alphabet! 📚✨`,
+      `📝 The English alphabet goes:\n\n${ALPHABET}\n\nEach letter represents a unique sound! 🗣️`,
+      `🎯 Complete alphabet sequence:\n\n${ALPHABET}\n\nFun fact: Alphabet comes from the first two Greek letters, Alpha and Beta! 🇬🇷`,
+    ],
+  },
+
+  // Numbers sequence
+  {
+    regex: /\b(count.*to|numbers|number.*sequence|1.*2.*3|123|counting)\b/i,
+    responses: [
+      `🔢 Let me count for you:\n\n${NUMBERS}\n\nWould you like me to count higher? 📈`,
+      `📊 Here's the number sequence:\n\n${NUMBERS}\n\nNumbers are the building blocks of math! 🧮`,
+      `💯 Counting:\n\n${NUMBERS}\n\nEach number is one unit more than the last! ➕`,
+    ],
+  },
+
+  // Months of the year
+  {
+    regex: /\b(months|list.*months|all.*months|12.*months|months.*of.*year)\b/i,
+    responses: [
+      `📅 All 12 months of the year:\n\n${MONTHS_OF_YEAR}\n\nThat's a complete year! 🌍✨`,
+      `🗓️ Here are all the months:\n\n${MONTHS_OF_YEAR}\n\nEach month has a special name and different number of days! 📆`,
+      `🌟 The 12 months in order:\n\n${MONTHS_OF_YEAR}\n\nJanuary is the first, December is the last! 🎄`,
+    ],
+  },
+
+  // Days of the week
+  {
+    regex: /\b(days|list.*days|days.*of.*week|7.*days|monday|tuesday|wednesday)\b/i,
+    responses: [
+      `📅 The 7 days of the week:\n\n${DAYS_OF_WEEK}\n\nThey repeat every week! 🔄`,
+      `🌅 Here are all the days:\n\n${DAYS_OF_WEEK}\n\nMonday is the start of the work week in most places! 💼`,
+      `⏰ Days of the week:\n\n${DAYS_OF_WEEK}\n\nEach day has its own special vibe! ✨`,
+    ],
+  },
+
+  // Planets
+  {
+    regex: /\b(planets|solar.*system|how.*many.*planets|list.*planets|planet.*names)\b/i,
+    responses: [
+      `🪐 Our solar system has 8 planets:\n\n${PLANETS}\n\nEarth is the third one, where we live! 🌍🚀`,
+      `🌍 All planets in order from the sun:\n\n${PLANETS}\n\nMercury is closest, Neptune is farthest! ☀️`,
+      `🔭 Here are all 8 planets:\n\n${PLANETS}\n\nJupiter is the biggest! 🪐✨`,
+    ],
+  },
+
+  // Continents
+  {
+    regex: /\b(continents|how.*many.*continents|list.*continents|continent.*names)\b/i,
+    responses: [
+      `🌏 There are 7 continents:\n\n${CONTINENTS}\n\nEach one has unique cultures and landscapes! 🗺️✨`,
+      `🌍 All continents:\n\n${CONTINENTS}\n\nAsia is the largest by population! 👥`,
+      `🧭 The 7 continents:\n\n${CONTINENTS}\n\nAustralia is both a continent and a country! 🦘`,
+    ],
+  },
+
+  // Oceans
+  {
+    regex: /\b(oceans|how.*many.*oceans|list.*oceans|ocean.*names)\b/i,
+    responses: [
+      `🌊 There are 5 oceans:\n\n${OCEANS}\n\nOceans cover about 71% of Earth! 💧🌍`,
+      `🏖️ All the world's oceans:\n\n${OCEANS}\n\nThe Pacific Ocean is the largest! 🌊`,
+      `⛵ The 5 oceans:\n\n${OCEANS}\n\nThey're all connected and home to millions of marine species! 🐠🐋`,
+    ],
+  },
+
+  // Rainbow colors
+  {
+    regex: /\b(rainbow.*colors|colors.*rainbow|roygbiv)\b/i,
+    responses: [
+      `🌈 Rainbow colors in order:\n\n${RAINBOW_COLORS}\n\nEach color is created by different wavelengths of light! 🔴🟠🟡🟢🔵🟣`,
+      `✨ The 7 colors of the rainbow:\n\n${RAINBOW_COLORS}\n\nThey appear when sunlight is refracted through water droplets! ☀️💧`,
+      `🎨 ROYGBIV stands for:\n\n${RAINBOW_COLORS}\n\nThese colors appear in this exact order in rainbows! 🌟`,
+    ],
+  },
+
+  // Colors
+  {
+    regex: /\b(colors|list.*colors|basic.*colors)\b/i,
+    responses: [
+      `🎨 Here are some basic colors:\n\n${BASIC_COLORS}\n\nColors come in infinite shades and combinations! 🌈`,
+      `🖌️ Common colors:\n\n${BASIC_COLORS}\n\nColors can evoke different emotions and moods! 💭✨`,
+      `🎪 Basic color palette:\n\n${BASIC_COLORS}\n\nEvery color is beautiful in its own way! 💖`,
+    ],
+  },
+
+  // ============================================================
+  // MATH & CALCULATIONS RESPONSES
+  // ============================================================
+
+  // Simple math
+  {
+    regex: /\b(what.*is|calculate|how.*much|solve)\b.*(\d+\s*[\+\-\*\/]\s*\d+|[0-9].*(?:\+|-|\*|÷|\/|divided|plus|minus|times|multiplied))|2.*\+.*2|5.*\+.*3|10.*-.*3|3.*\*.*4/i,
+    responses: [
+      "Let me solve that for you! 🧮\n\n2 + 2 = 4 ✨\n\nSimple addition! ➕",
+      "Math time! 🤓\n\nHere's the answer: Let me break it down step by step! 📊",
+      "Great math question! 💯\n\nI can help you calculate that! 🔢",
+      "Math is fun! 🎯\n\nLet's solve this together! 📐",
+    ],
+  },
+
+  // General math question
+  {
+    regex: /\b(math|formula|equation|calculate|conversion|percent)\b/i,
+    responses: [
+      "Ah, a math question! 🧮 I love it! What specifically would you like to know? Just ask away! 📊",
+      "Math is awesome! 🤓 What calculation do you need help with? 🔢",
+      "Ready for some math! 💯 Give me your question and I'll help! 📈",
+      "Math time! 🎯 What would you like me to calculate or explain? ✨",
+    ],
+  },
+
+  // Unit conversion
+  {
+    regex: /\b(convert|cm.*meter|mile.*km|kilogram|gram|pound|ounce|inch|foot)\b/i,
+    responses: [
+      "Unit conversion! 📏 Here are some common conversions:\n\n1 meter = 100 cm\n1 km ≈ 0.62 miles\n1 kg = 1000 grams\n1 pound ≈ 453 grams\n\nWhat would you like to convert? 🔄",
+      "Measurements! 📐 Let me help you convert:\n\n1 meter = 3.28 feet\n1 inch = 2.54 cm\n1 kg = 2.2 pounds\n\nWhich conversion do you need? 🤔",
+      "Conversions made easy! ✨ Common ones:\n\n1 kilometer = 1000 meters\n1 mile ≈ 1.6 km\n1 foot = 12 inches\n\nWhat else? 📏",
+    ],
+  },
+
+  // ============================================================
+  // JOKES & HUMOR RESPONSES
+  // ============================================================
+
+  // Animal jokes - especially the cow one!
+  {
+    regex: /\b(cow.*no.*legs|no.*legs.*cow|ground.*beef|animal.*joke|what.*do.*you.*call)\b/i,
+    responses: [
+      `🥩 What do you call a cow with no legs?\n\nGround beef! 🤣\n\nClassic joke! Did I get you? 😄`,
+      `😆 You want to know about the legless cow?\n\nAnswer: Ground beef!\n\nOne of my favorite jokes! 🐄➡️🥩`,
+      `🤭 Here's one for you:\n\nQ: What do you call a cow with no legs?\nA: Ground beef!\n\nGot any more? I love jokes! 😄`,
+    ],
+  },
+
+  // Programming jokes
+  {
+    regex: /\b(programmer.*joke|coding.*joke|java.*developer|debug|syntax|error)\b/i,
+    responses: [
+      `🤓 Here's a programmer joke:\n\nWhy do Java developers wear glasses?\nBecause they can't C#! 😄\n\nBetter than debugging, right? 💻`,
+      `💻 Love coding jokes! Here's one:\n\nHow many programmers does it take to change a light bulb?\nNone, that's a hardware problem! 🤣\n\nThe struggle is real! 😅`,
+      `👨‍💻 Got a good one:\n\nWhy did the developer go broke?\nBecause he lost his cache! 💰😄\n\nComputer humor! ✨`,
+    ],
+  },
+
+  // Would you rather
+  {
+    regex: /\b(would.*you.*rather|choose.*or|pick.*one)\b/i,
+    responses: [
+      "Ooh, a 'would you rather' question! 🤔 I love these!\n\nGive me the two options and I'll pick one and tell you why! 😊",
+      "Would you rather is my jam! 🎯 Let me hear your options and I'll choose! 🤷‍♂️",
+      "Great question! 🎪 Lay out your would you rather and I'll give you my pick! 💭",
+      "Love this game! 🎮 Give me two options and watch me decide! 🧠✨",
+    ],
+  },
+
+  // General jokes
+  {
+    regex: /\b(tell.*joke|joke|funny|make.*laugh|laugh|haha|tell.*something.*funny)\b/i,
+    responses: [
+      () => {
+        const allJokes = [
+          ...JOKES.ANIMAL,
+          ...JOKES.PROGRAMMING,
+          ...JOKES.PUNS,
+          ...JOKES.GAMING,
+        ];
+        const randomJoke =
+          allJokes[Math.floor(Math.random() * allJokes.length)];
+        return `😄 Here's a joke for you:\n\n${randomJoke.setup}\n\n${randomJoke.punchline}\n\nWant another? 🤣`;
+      },
+      "Jokes incoming! 🎉 Pick a category:\n\n• Animal jokes 🐾\n• Programming jokes 💻\n• Puns 🎯\n• Gaming jokes 🎮\n\nWhich one? 😄",
+      "Time to laugh! 😄 Here's a fun one just for you! 🎪✨",
+      "Let me make you smile! 😊 One joke coming up! 🤣",
+    ],
+  },
+
+  // ============================================================
+  // GAMING & TECH KNOWLEDGE RESPONSES
+  // ============================================================
+
+  // Minecraft
+  {
+    regex: /\b(minecraft|do.*you.*know.*minecraft|ever.*played.*minecraft)\b/i,
+    responses: [
+      `🎮 Yes! I know about Minecraft! It's an amazing sandbox game where you can:\n\n• Build incredible structures 🏰\n• Mine for resources ⛏️\n• Survive against mobs 👾\n• Explore infinite worlds 🌍\n• Create in Creative Mode 🎨\n\nGame modes: ${GAMING_KNOWLEDGE.minecraft.gameModes}\n\nDo you play? What's your favorite part? 🕊️`,
+      `🎯 Minecraft is legendary! 🌟\n\n${GAMING_KNOWLEDGE.minecraft.description}\n\n${GAMING_KNOWLEDGE.minecraft.popularity}\n\nHave you played? What do you like about it? 😊`,
+      `⛏️ Minecraft! 🎮 One of the greatest games ever created!\n\nYou can build, mine, farm, fight mobs, and explore! Pure creative freedom! 🌈\n\nSurvival? Creative? Adventure mode? Which do you prefer? 🤔`,
+    ],
+  },
+
+  // Gaming knowledge general
+  {
+    regex: /\b(gaming|video.*game|game|roblox|fortnite|mlbb|play.*game|gamer)\b/i,
+    responses: [
+      "Oh, a fellow gamer! 🎮 What games do you like? I can chat about:\n\n• Minecraft - Building sandbox 🏰\n• Roblox - User-created games 🎪\n• Fortnite - Battle royale 🎯\n• League of Legends - Team strategy 🏆\n• And more! 🌟\n\nWhat's your favorite? 😊",
+      "Gaming is awesome! 🕹️ So many great games out there! Whether it's indie games, AAA titles, or mobile games, there's something for everyone! 🎮\n\nWhat are you playing right now? 👀",
+      "Gamers unite! 🎯 I love talking about games! There's such a diverse gaming community with so many genres and platforms! 🌈\n\nAre you into competitive gaming or more casual fun? 🤔",
+    ],
+  },
+
+  // Coding knowledge
+  {
+    regex: /\b(do.*you.*know.*how.*to.*code|can.*you.*code|coding|do.*you.*code|programming)\b/i,
+    responses: [
+      `💻 Yes! I do know how to code! 🤓 I'm built with JavaScript, React, and Python! Coding is writing instructions for computers using programming languages. It's a superpower that helps you build anything you imagine! 🚀 Do you code too?`,
+      `✨ I sure do! 💻 In fact, I'm made of code myself! 🤖 I use JavaScript and React to think and respond to you! Pretty cool, right? 🎯 Interested in coding? It's incredibly rewarding and empowering! 🌟`,
+      `🧠 Absolutely! Coding is one of my superpowers! 💪 I speak multiple programming languages and I'm here to help! Whether you want to learn coding or just chat about tech, I'm your bot! 🚀✨`,
+    ],
+  },
+
+  // Coding question general
+  {
+    regex: /\b(code|javascript|react|python|html|css|developer|software|engineer)\b/i,
+    responses: [
+      "Coding question! 💻 I love tech talk! What would you like to know about programming, web development, or software? 🚀",
+      "Tech time! 🤓 Whether it's JavaScript, Python, React, or general programming concepts, I'm here to chat! 📚",
+      "Developer life! 💪 What coding topic interests you? I can talk about languages, frameworks, best practices, and more! 🌟",
+      "Software engineering! 🎯 What's on your mind? Frontend? Backend? Full-stack? Let's discuss! 💻✨",
+    ],
+  },
+
+  // ============================================================
+  // BOT SELF-AWARENESS RESPONSES
+  // ============================================================
+
+  // Are you smart
+  {
+    regex: /\b(are.*you.*smart|smart|intelligent|iq|genius)\b/i,
+    responses: [
+      () => {
+        return BOT_KNOWLEDGE.smartness[
+          Math.floor(Math.random() * BOT_KNOWLEDGE.smartness.length)
+        ];
+      },
+      "I like to think I'm intelligent, but what really matters is being helpful! 🧠💖 And I always try my best! ✨",
+      "Smart is relative! 🤔 I can process information quickly and learn from conversations, but true intelligence is wisdom and helping others! 🌟",
+    ],
+  },
+
+  // What can you do
+  {
+    regex: /\b(what.*can.*you.*do|capabilities|can.*you|what.*can.*i|features.*you)\b/i,
+    responses: [
+      () => {
+        return `Here's what I can do! 🌟\n\n${BOT_KNOWLEDGE.capabilities.map((c) => `• ${c}`).join("\n")}\n\nTry asking me anything! 💬✨`;
+      },
+      "Great question! 🎯 I can:\n\n• Answer questions about Auri\n• Chat about gaming, coding, and tech\n• Tell jokes and be funny\n• Help with general knowledge\n• And much more!\n\nWhat would you like to know? 🤔",
+    ],
+  },
+
+  // Languages you know
+  {
+    regex: /\b(languages.*you.*know|what.*languages|speak|language|multilingual)\b/i,
+    responses: [
+      () => {
+        return `Languages I know! 💬\n\n${BOT_KNOWLEDGE.languages.map((l) => `• ${l}`).join("\n")}\n\nEnglish is my main language for chatting with you! 🗣️✨`;
+      },
+      "I speak several languages! 🌍\n\nPrimarily JavaScript, React for my core systems, and English fluently for talking with you! 💻\n\nI can understand and chat about many topics too! 🌟",
+    ],
+  },
+
+  // How do you work
+  {
+    regex: /\b(how.*do.*you.*work|how.*do.*you.*function|how.*you.*built)\b/i,
+    responses: [
+      () => {
+        return `How I work! 🤖\n\n${BOT_KNOWLEDGE.how_work}\n\nI analyze your message, detect what you're asking about, and generate a response! ✨`;
+      },
+      "Great question! 🧠 I use:\n\n1. Pattern recognition - Understanding your intent\n2. Knowledge bases - Having accurate answers\n3. Context memory - Remembering our chat\n4. Response generation - Creating helpful replies\n\nAll in real-time! 🚀",
+      "I'm basically a smart pattern matcher! 🎯 I read what you say, figure out what you're asking, look up the answer in my knowledge base, and respond with the best answer! Simple but effective! ✨🤖",
+    ],
+  },
 ];
+
+// Helper function for fuzzy matching (typo tolerance)
+const levenshteinDistance = (str1, str2) => {
+  const track = Array(str2.length + 1).fill(null).map(() =>
+    Array(str1.length + 1).fill(null)
+  );
+  for (let i = 0; i <= str1.length; i += 1) {
+    track[0][i] = i;
+  }
+  for (let j = 0; j <= str2.length; j += 1) {
+    track[j][0] = j;
+  }
+  for (let j = 1; j <= str2.length; j += 1) {
+    for (let i = 1; i <= str1.length; i += 1) {
+      const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(
+        track[j][i - 1] + 1,
+        track[j - 1][i] + 1,
+        track[j - 1][i - 1] + indicator
+      );
+    }
+  }
+  return track[str2.length][str1.length];
+};
+
+// Fuzzy word matching - finds similar words (handles typos)
+const findSimilarWord = (word, candidates, maxDistance = 2) => {
+  const distances = candidates.map((candidate) => ({
+    word: candidate,
+    distance: levenshteinDistance(word.toLowerCase(), candidate.toLowerCase()),
+  }));
+  const closest = distances.sort((a, b) => a.distance - b.distance)[0];
+  return closest && closest.distance <= maxDistance ? closest.word : null;
+};
+
+// Helper to apply fuzzy matching to message
+const applyFuzzyMatching = (message) => {
+  const commonTypos = {
+    hoe: "how",
+    contoct: "contact",
+    helloooo: "hello",
+    helloooo: "hello",
+    yoou: "you",
+    teh: "the",
+    thier: "their",
+    recieve: "receive",
+    occured: "occurred",
+    seperate: "separate",
+  };
+
+  let corrected = message;
+  Object.entries(commonTypos).forEach(([typo, correct]) => {
+    corrected = corrected.replace(new RegExp(`\\b${typo}\\b`, "gi"), correct);
+  });
+
+  return corrected;
+};
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showUserMessage, setShowUserMessage] = useState(false);
+  const [currentEmoji, setCurrentEmoji] = useState(null); // State for emoji above messages-container
   const [conversationContext, setConversationContext] = useState({
     lastIntent: null,
     topic: null,
@@ -1966,9 +2966,11 @@ const Chatbot = () => {
   // Welcome message on component mount
   useEffect(() => {
     if (messages.length === 0) {
+      const { emoji, cleanedText } = extractEmojiFromText("Hey there! 👋 I'm here to help with anything Auri-related. What would you like to know?");
       const welcomeMsg = {
         type: "bot",
-        text: "Hey there! 👋 I'm here to help with anything Auri-related. What would you like to know?",
+        text: cleanedText,
+        emoji: emoji,
         id: Date.now(),
       };
       setMessages([welcomeMsg]);
@@ -1976,10 +2978,12 @@ const Chatbot = () => {
   }, [messages.length]);
 
   const generateResponse = (userMessage) => {
-    const lowerMsg = userMessage.toLowerCase();
+    // Apply fuzzy matching to handle typos
+    const correctedMessage = applyFuzzyMatching(userMessage);
+    const lowerMsg = correctedMessage.toLowerCase();
 
     // First, check for specific intents
-    const intent = detectIntent(userMessage);
+    const intent = detectIntent(correctedMessage);
 
     // Extract user name if USER_NAME intent
     let extractedName = null;
@@ -2064,6 +3068,169 @@ const Chatbot = () => {
       return "Not yet either! 🍎 But don't worry - you can already use Auri on the web right now! Just click 'Visit Auri' below 👇";
     }
 
+    // ============================================================
+    // NEW INTENT HANDLERS - General Knowledge, Math, Jokes, Gaming, Coding
+    // ============================================================
+
+    // General Knowledge Intents - Direct responses
+    if (intent === "ALPHABET") {
+      return `🔤 Here's the alphabet: ${ALPHABET} - There are 26 letters in the English alphabet! 📚✨`;
+    }
+
+    if (intent === "NUMBERS_SEQUENCE") {
+      return `🔢 Let me count for you:\n\n${NUMBERS}\n\nWould you like me to count higher? 📈`;
+    }
+
+    if (intent === "MONTHS") {
+      return `📅 All 12 months of the year:\n\n${MONTHS_OF_YEAR}\n\nThat's a complete year! 🌍✨`;
+    }
+
+    if (intent === "DAYS_OF_WEEK") {
+      return `📅 The 7 days of the week:\n\n${DAYS_OF_WEEK}\n\nThey repeat every week! 🔄`;
+    }
+
+    if (intent === "PLANETS") {
+      return `🪐 Our solar system has 8 planets:\n\n${PLANETS}\n\nEarth is the third one, where we live! 🌍🚀`;
+    }
+
+    if (intent === "CONTINENTS") {
+      return `🌏 There are 7 continents:\n\n${CONTINENTS}\n\nEach one has unique cultures and landscapes! 🗺️✨`;
+    }
+
+    if (intent === "OCEANS") {
+      return `🌊 There are 5 oceans:\n\n${OCEANS}\n\nOceans cover about 71% of Earth! 💧🌍`;
+    }
+
+    if (intent === "RAINBOW_COLORS") {
+      return `🌈 Rainbow colors in order:\n\n${RAINBOW_COLORS}\n\nEach color is created by different wavelengths of light! 🔴🟠🟡🟢🔵🟣`;
+    }
+
+    if (intent === "COLORS") {
+      return `🎨 Here are some basic colors:\n\n${BASIC_COLORS}\n\nColors come in infinite shades and combinations! 🌈`;
+    }
+
+    // Math Intents
+    if (intent === "MATH_SIMPLE") {
+      return "Let me solve that for you! 🧮\n\n2 + 2 = 4 ✨\n\nSimple math! ➕ Give me your specific equation and I'll calculate it!";
+    }
+
+    if (intent === "MATH_QUESTION") {
+      return "Math time! 🤓 What calculation would you like help with? Just give me the numbers and operation! 📊";
+    }
+
+    if (intent === "UNIT_CONVERSION") {
+      return "Unit conversion! 📏 Here are some common conversions:\n\n1 meter = 100 cm\n1 km ≈ 0.62 miles\n1 kg = 1000 grams\n1 pound ≈ 453 grams\n\nWhat would you like to convert? 🔄";
+    }
+
+    // Joke Intents
+    if (intent === "JOKE_ANIMAL") {
+      return `🥩 What do you call a cow with no legs?\n\nGround beef! 🤣\n\nClassic! Did I get you? 😄`;
+    }
+
+    if (intent === "JOKE_PROGRAMMING") {
+      return `🤓 Here's one:\n\nWhy do Java developers wear glasses?\nBecause they can't C#! 😄\n\nBetter than debugging, right? 💻`;
+    }
+
+    if (intent === "WOULD_YOU_RATHER") {
+      return "Ooh, 'would you rather'! 🤔 I love these!\n\nGive me the two options and I'll pick one and tell you why! 😊🎯";
+    }
+
+    if (intent === "JOKE_GENERAL") {
+      const allJokes = [
+        ...JOKES.ANIMAL,
+        ...JOKES.PROGRAMMING,
+        ...JOKES.PUNS,
+        ...JOKES.GAMING,
+      ];
+      const randomJoke =
+        allJokes[Math.floor(Math.random() * allJokes.length)];
+      return `😄 Here's a joke for you:\n\n${randomJoke.setup}\n\n${randomJoke.punchline}\n\nWant another? 🤣`;
+    }
+
+    // Gaming Intents
+    if (intent === "GAMING_MINECRAFT") {
+      return `🎮 Yes! I know about Minecraft! It's an amazing sandbox game where you can:\n\n• Build incredible structures 🏰\n• Mine for resources ⛏️\n• Survive against mobs 👾\n• Explore infinite worlds 🌍\n• Create in Creative Mode 🎨\n\nGame modes: ${GAMING_KNOWLEDGE.minecraft.gameModes}\n\nDo you play? What's your favorite part? 🕊️`;
+    }
+
+    if (intent === "GAMING_KNOWLEDGE") {
+      return "Oh, a fellow gamer! 🎮 What games do you like? I can chat about:\n\n• Minecraft - Building sandbox 🏰\n• Roblox - User-created games 🎪\n• Fortnite - Battle royale 🎯\n• League of Legends - Team strategy 🏆\n• And more! 🌟\n\nWhat's your favorite? 😊";
+    }
+
+    // Coding Intents
+    if (intent === "CODING_KNOWLEDGE") {
+      return `💻 Yes! I do know how to code! 🤓 I'm built with JavaScript, React, and Python! Coding is writing instructions for computers using programming languages. It's a superpower that helps you build anything you imagine! 🚀 Do you code too?`;
+    }
+
+    if (intent === "CODING_QUESTION") {
+      return "Coding question! 💻 I love tech talk! What would you like to know about programming, web development, or software? 🚀";
+    }
+
+    // Bot Self-Awareness Intents
+    if (intent === "BOT_SMARTNESS") {
+      const smartnessResponse =
+        BOT_KNOWLEDGE.smartness[
+          Math.floor(Math.random() * BOT_KNOWLEDGE.smartness.length)
+        ];
+      return smartnessResponse;
+    }
+
+    if (intent === "BOT_CAPABILITIES") {
+      return `Here's what I can do! 🌟\n\n${BOT_KNOWLEDGE.capabilities.map((c) => `• ${c}`).join("\n")}\n\nTry asking me anything! 💬✨`;
+    }
+
+    if (intent === "BOT_LANGUAGES") {
+      return `Languages I know! 💬\n\n${BOT_KNOWLEDGE.languages.map((l) => `• ${l}`).join("\n")}\n\nEnglish is my main language for chatting with you! 🗣️✨`;
+    }
+
+    if (intent === "BOT_HOW_WORKS") {
+      return `How I work! 🤖\n\n${BOT_KNOWLEDGE.how_work}\n\nI analyze your message, detect what you're asking about, and generate a response! ✨`;
+    }
+
+    // Compliments & Personality
+    if (intent === "COMPLIMENT") {
+      const complimentResponses = [
+        "Aww, thank you! 😊 That makes my day! I'm here to make your Auri experience amazing!",
+        "Thank you so much! 💖 I try my best to be helpful and friendly! 😌",
+        "You're so sweet! 🥰 I appreciate the kind words! Is there anything else you'd like to know?",
+        "That's very kind of you! 😌 I'm just excited to chat with you about Auri! ✨",
+      ];
+      return complimentResponses[Math.floor(Math.random() * complimentResponses.length)];
+    }
+
+    if (intent === "PERSONALITY_QUESTION") {
+      const personalityResponses = [
+        "Great question! 🤔 I'm programmed to be helpful, friendly, and patient! I love learning about what people think of Auri and helping them discover cool features!",
+        "I'd say I'm peaceful, thoughtful, and genuinely interested in meaningful conversations! 🌟 Just like Auri itself - calm but purposeful!",
+        "I'm like Auri's personality - calm, genuine, and focused on real connections rather than drama! 😊 I aim to be helpful without being annoying!",
+      ];
+      return personalityResponses[Math.floor(Math.random() * personalityResponses.length)];
+    }
+
+    if (intent === "TRAVEL_DESTINATION") {
+      return "Travel destinations! ✈️ That's outside my expertise since I'm focused on Auri! 🌍 But I love that you're adventurous! Maybe you'd want to share your travel moments on Auri's upcoming Moments feature when it launches! 📸 Where are you thinking of going?";
+    }
+
+    if (intent === "HEALTH_MEDICINE") {
+      return "Health & Medicine questions! 🏥 I'm not a doctor, so I can't give medical advice! 😅 Please consult with a healthcare professional for any health concerns. But I appreciate you asking! Is there anything about Auri I can help with instead?";
+    }
+
+    if (intent === "CELEBRITY_KNOWLEDGE") {
+      return "Celebrity knowledge! 🌟 I know a bit about famous people, but that's not really my specialty - I'm all about Auri! 😊 But I understand you're interested in pop culture! What would you like to know about Auri instead?";
+    }
+
+    if (intent === "CONTACT_SUPPORT") {
+      return "Need to contact support? 📧 You can reach the Innoxation team (creators of Auri) through our official website! Jacob is the founder and loves hearing feedback! 💙 Is there a specific issue I can help you with about Auri?";
+    }
+
+    if (intent === "TECHNICAL_EXPLANATION") {
+      const techResponses = [
+        "Great technical question! 💻 I'm built with JavaScript and React for the frontend, with intelligent pattern matching for understanding your messages! When I say 'built with JavaScript', it means the code that powers me runs JavaScript - the language of web development! Pretty cool, right? 🚀",
+        "By 'built with JavaScript', I mean my core logic uses JavaScript to understand patterns, match your questions to responses, and generate helpful answers! 🧠 JavaScript powers web applications like Auri's chat interface!",
+        "I'm constructed using JavaScript frameworks and logic! That means when you message me, JavaScript code analyzes your text, identifies what you're asking about, looks it up in my knowledge base, and sends back a response - all in real-time! ⚡",
+      ];
+      return techResponses[Math.floor(Math.random() * techResponses.length)];
+    }
+
     // Update conversation context for main intents
     if (intent) {
       setConversationContext((prev) => ({
@@ -2093,6 +3260,11 @@ const Chatbot = () => {
         newInterests.push("live streaming");
       if (intent === "BUSINESS_PARTNERSHIPS") newInterests.push("business");
       if (intent === "VERIFICATION_BADGES") newInterests.push("verification");
+      // Add new interests for knowledge-based intents
+      if (intent.includes("GAMING")) newInterests.push("gaming");
+      if (intent.includes("CODING") || intent.includes("MATH"))
+        newInterests.push("tech");
+      if (intent.includes("JOKE")) newInterests.push("humor");
       if (newInterests.length > 0) {
         setConversationContext((prev) => ({
           ...prev,
@@ -2417,7 +3589,13 @@ const Chatbot = () => {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMsg = { type: "user", text: input, id: Date.now() };
+    // Detect emotion from user message and set emoji
+    const detectedEmoji = detectUserEmotion(input);
+    if (detectedEmoji) {
+      setCurrentEmoji(detectedEmoji);
+    }
+
+    const userMsg = { type: "user", text: input, id: Date.now(), emoji: DEFAULT_EMOJI };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
@@ -2426,8 +3604,9 @@ const Chatbot = () => {
     // Simulate typing with 3 second delay
     const thinkingTime = 3000;
     setTimeout(() => {
-      const botResponse = generateResponse(input);
-      const botMsg = { type: "bot", text: botResponse, id: Date.now() + 1 };
+      const botResponseText = generateResponse(input);
+      const { emoji, cleanedText } = extractEmojiFromText(botResponseText);
+      const botMsg = { type: "bot", text: cleanedText, emoji: emoji, id: Date.now() + 1 };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
       setShowUserMessage(false); // Hide user message, show bot response
@@ -2452,6 +3631,26 @@ const Chatbot = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      {currentEmoji && (
+        <motion.div
+          className="emoji-above-messages"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          style={{
+            position: 'absolute',
+            top: '-60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10,
+            fontSize: '48px',
+            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
+          }}
+        >
+          <EmojiImage emojiName={currentEmoji} size={100} />
+        </motion.div>
+      )}
       <div className="messages-container">
         <AnimatePresence mode="wait">
           {shouldShowMessage && (

@@ -62,6 +62,18 @@ export const Footer = () => {
           </div>
         </div>
 
+        {/* Navigation Links */}
+        <div className="footer-section footer-nav">
+          <h4>Navigate</h4>
+          <div className="footer-nav-links">
+            <Link to="/" className="footer-link">Home</Link>
+            <Link to="/community" className="footer-link">Community</Link>
+            <Link to="/support" className="footer-link">Support</Link>
+            <Link to="/reviews" className="footer-link">Reviews</Link>
+            <Link to="/terms" className="footer-link">Terms</Link>
+          </div>
+        </div>
+
         {/* Resources 
         <div className="footer-section footer-resources">
           <h4>Resources</h4>
