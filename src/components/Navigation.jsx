@@ -164,8 +164,7 @@ export const Navigation = () => {
               className={`bottom-nav-link ${isActive(item.path) ? 'active' : ''}`}
               onClick={(e) => e.stopPropagation()}
             >
-              <Icon size={20} />
-              <span className="nav-label">{item.label}</span>
+              <Icon size={26} />
             </Link>
           );
         })}
