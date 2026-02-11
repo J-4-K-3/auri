@@ -1240,3 +1240,227 @@ export const clearUserName = () => {
 export default client;
 
 export { Permission, Role, Query };
+
+// ============================================
+// SURVEY FUNCTIONS
+// ============================================
+
+const SURVEY_SESSION_KEY = "auri_survey_session";
+const SURVEY_RESPONSE_KEY = "auri_survey_response";
+
+/**
+ * Get or create a session ID for survey tracking
+ */
+export const getOrCreateSessionId = async () => {
+  try {
+    // Check localStorage first
+    let sessionId = localStorage.getItem(SURVEY_SESSION_KEY);
+    
+    if (sessionId) {
+      return sessionId;
+    }
+    
+    // Generate new session ID
+    sessionId = `survey_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem(SURVEY_SESSION_KEY, sessionId);
+    
+    return sessionId;
+  } catch (error) {
+    console.error("Error getting session ID:", error);
+    return `offline_${Date.now()}`;
+  }
+};
+
+/**
+ * Get stored survey response (local fallback)
+ */
+export const getStoredSurveyResponse = () => {
+  try {
+    const stored = localStorage.getItem(SURVEY_RESPONSE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.error("Error retrieving stored survey response:", error);
+    return null;
+  }
+};
+
+/**
+ * Submit survey response to Appwrite
+ */
+export const submitSurveyResponse = async (surveyData) => {
+  try {
+    // Only include fields that exist in tracker collection
+    const payload = {
+      sessionId: surveyData.sessionId || await getOrCreateSessionId(),
+      os: surveyData.os || (typeof navigator !== 'undefined' ? navigator.platform : 'Unknown'),
+      been_here_before: sanitizeString(surveyData.been_here_before || '', 50),
+      created_account: sanitizeString(surveyData.created_account || '', 50),
+      not_ready_reason: sanitizeString(surveyData.not_ready_reason || '', 255),
+      send_hi: sanitizeString(surveyData.send_hi || '', 50),
+      daily_use: sanitizeString(surveyData.daily_use || '', 50),
+      best_include: sanitizeString(surveyData.best_include || '', 500),
+      why_not_daily: sanitizeString(surveyData.why_not_daily || '', 255),
+      community_belong: sanitizeString(surveyData.community_belong || '', 50),
+      leave_review: sanitizeString(surveyData.leave_review || '', 50),
+      overall_rating: surveyData.overall_rating ? parseInt(surveyData.overall_rating) : null,
+      survey_completed: true,
+      survey_started_at: surveyData.survey_started_at || new Date().toISOString(),
+    };
+
+    console.log('Submitting survey data:', JSON.stringify(payload, null, 2));
+
+    // Try to submit to tracker collection
+    try {
+      const response = await databases.createDocument(
+        APPWRITE_DATABASE_ID,
+        COLLECTION_TRACKER_ID,
+        payload.sessionId,
+        payload
+      );
+      console.log("Survey submitted successfully:", response);
+      return response;
+    } catch (collectionError) {
+      // If tracker collection doesn't exist or has different schema, create with minimal data
+      console.warn("Tracker collection submission failed, trying minimal payload:", collectionError);
+      
+      // Try creating document with only the fields that exist
+      const minimalPayload = {
+        sessionId: payload.sessionId,
+        os: payload.os,
+        survey_completed: true,
+        survey_started_at: payload.survey_started_at,
+      };
+      
+      // Add optional fields if they're not empty
+      if (payload.been_here_before) minimalPayload.been_here_before = payload.been_here_before;
+      if (payload.created_account) minimalPayload.created_account = payload.created_account;
+      if (payload.daily_use) minimalPayload.daily_use = payload.daily_use;
+      if (payload.overall_rating) minimalPayload.overall_rating = payload.overall_rating;
+      
+      const minimalResponse = await databases.createDocument(
+        APPWRITE_DATABASE_ID,
+        COLLECTION_TRACKER_ID,
+        payload.sessionId,
+        minimalPayload
+      );
+      
+      // Update with remaining fields
+      const updatePayload = {};
+      if (payload.not_ready_reason) updatePayload.not_ready_reason = payload.not_ready_reason;
+      if (payload.send_hi) updatePayload.send_hi = payload.send_hi;
+      if (payload.best_include) updatePayload.best_include = payload.best_include;
+      if (payload.why_not_daily) updatePayload.why_not_daily = payload.why_not_daily;
+      if (payload.community_belong) updatePayload.community_belong = payload.community_belong;
+      if (payload.leave_review) updatePayload.leave_review = payload.leave_review;
+      
+      if (Object.keys(updatePayload).length > 0) {
+        await databases.updateDocument(
+          APPWRITE_DATABASE_ID,
+          COLLECTION_TRACKER_ID,
+          payload.sessionId,
+          updatePayload
+        );
+      }
+      
+      return minimalResponse;
+    }
+  } catch (error) {
+    console.error("Error submitting survey response:", error);
+    
+    // Save locally as fallback
+    try {
+      localStorage.setItem(SURVEY_RESPONSE_KEY, JSON.stringify({
+        ...surveyData,
+        localSavedAt: new Date().toISOString()
+      }));
+    } catch (localError) {
+      console.error("Failed to save survey locally:", localError);
+    }
+    
+    throw error;
+  }
+};
+
+/**
+ * Update existing survey response
+ */
+export const updateSurveyResponse = async (sessionId, updateData) => {
+  try {
+    // First check if document exists
+    try {
+      await databases.getDocument(
+        APPWRITE_DATABASE_ID,
+        COLLECTION_TRACKER_ID,
+        sessionId
+      );
+    } catch (getError) {
+      // Document doesn't exist, create it
+      return await submitSurveyResponse({
+        ...updateData,
+        sessionId
+      });
+    }
+
+    const payload = {};
+    
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] !== undefined && updateData[key] !== null) {
+        if (typeof updateData[key] === 'string') {
+          payload[key] = sanitizeString(updateData[key], 500);
+        } else {
+          payload[key] = updateData[key];
+        }
+      }
+    });
+    
+    const response = await databases.updateDocument(
+      APPWRITE_DATABASE_ID,
+      COLLECTION_TRACKER_ID,
+      sessionId,
+      payload
+    );
+    
+    console.log("Survey updated successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Error updating survey response:", error);
+    throw error;
+  }
+};
+
+/**
+ * Check if survey was already completed
+ */
+export const isSurveyCompleted = () => {
+  try {
+    const completed = localStorage.getItem('auri_survey_completed');
+    return completed === 'true';
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * Mark survey as completed locally
+ */
+export const markSurveyCompleted = () => {
+  try {
+    localStorage.setItem('auri_survey_completed', 'true');
+  } catch (error) {
+    console.error("Error marking survey as completed:", error);
+  }
+};
+
+/**
+ * Reset survey status (for testing)
+ */
+export const resetSurveyStatus = () => {
+  try {
+    localStorage.removeItem('auri_survey_completed');
+    localStorage.removeItem('auri_survey_seen');
+    localStorage.removeItem(SURVEY_SESSION_KEY);
+    localStorage.removeItem(SURVEY_RESPONSE_KEY);
+  } catch (error) {
+    console.error("Error resetting survey status:", error);
+  }
+};

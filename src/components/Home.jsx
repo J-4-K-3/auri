@@ -2,13 +2,27 @@ import React from "react";
 import { motion } from "framer-motion";
 import "../styles/Home.css";
 import DownloadModal from "./DownloadModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Chatbot from "../lib/Chatbot";
+import { SurveyPopup } from "./SurveyPopup";
+import { isSurveyCompleted } from "../lib/Appwrite";
 
 export const Home = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [surveyOpen, setSurveyOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Show survey popup after 3 seconds if not completed
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isSurveyCompleted()) {
+        setSurveyOpen(true);
+      }
+    }, 3000); // 3 second delay
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Critical styles to ensure buttons work correctly
   const criticalStyles = `
@@ -470,6 +484,9 @@ export const Home = () => {
           />
         </motion.div>
       </motion.div>
+
+      {/* Survey Popup - Shows after 3 seconds if not completed */}
+      <SurveyPopup isOpen={surveyOpen} onClose={() => setSurveyOpen(false)} />
     </>
   );
 };

@@ -142,6 +142,17 @@ const INTENT_PRIORITY = {
   BOT_CAPABILITIES: 57,
   BOT_LANGUAGES: 57,
   BOT_HOW_WORKS: 57,
+
+  // Personality & Out-of-the-Ordinary Questions (Medium-High priority)
+  PLANET_VISIT: 58,
+  FAVORITE_PROGRAMMING_LANGUAGE: 58,
+  WOULD_YOU_RATHER_SPECIFIC: 59,
+  BOT_DREAMS: 57,
+  BOT_SECRET: 57,
+  BOT_FEELINGS: 57,
+  WEIRD_KNOWLEDGE: 56,
+  BOT_PERSONALITY: 57,
+  FUN_FACT: 55,
 };
 
 // Deduplicate intent detection - detect all, pick highest priority
@@ -1071,6 +1082,82 @@ const detectIntent = (msg) => {
     () => {
       if (/\b(built with|built.*with|what.*language|framework|technology|code|javascript|python|what do you mean)\b/i.test(lowerMsg)) {
         return "TECHNICAL_EXPLANATION";
+      }
+      return null;
+    },
+
+    // ============================================================
+    // OUT-OF-THE-ORDINARY / PERSONALITY QUESTIONS
+    // ============================================================
+
+    // If you could visit any planet - random planet selection
+    () => {
+      if (/\b(visit.*planet|which.*planet|planet.*visit|favorite.*planet|travel.*planet)\b/i.test(lowerMsg)) {
+        return "PLANET_VISIT";
+      }
+      return null;
+    },
+
+    // Favorite programming language
+    () => {
+      if (/\b(favorite.*programming.*language|programming.*language.*favorite|what.*language.*favorite|fav.*language.*code)\b/i.test(lowerMsg)) {
+        return "FAVORITE_PROGRAMMING_LANGUAGE";
+      }
+      return null;
+    },
+
+    // Would you rather specific (horse-sized duck, etc)
+    () => {
+      if (/\b(horse.*sized.*duck|duck.*sized.*horse|100.*duck.*horse|duck.*horse.*battle)\b/i.test(lowerMsg)) {
+        return "WOULD_YOU_RATHER_SPECIFIC";
+      }
+      return null;
+    },
+
+    // What do you dream about
+    () => {
+      if (/\b(do.*you.*dream|dream.*about|dreaming|dreams|what.*you.*dream)\b/i.test(lowerMsg)) {
+        return "BOT_DREAMS";
+      }
+      return null;
+    },
+
+    // Can you tell me a secret
+    () => {
+      if (/\b(tell.*secret|secret|secrets|can.*you.*keep.*a.*secret|know.*any.*secret)\b/i.test(lowerMsg)) {
+        return "BOT_SECRET";
+      }
+      return null;
+    },
+
+    // Do you have feelings
+    () => {
+      if (/\b(do.*you.*have.*feelings|have.*feelings|feelings|do.*you.*feel|emotions|do.*you.*experience)\b/i.test(lowerMsg)) {
+        return "BOT_FEELINGS";
+      }
+      return null;
+    },
+
+    // Weirdest thing you know
+    () => {
+      if (/\b(weird.*thing|weirdest|strange.*fact|obscure.*knowledge|crazy.*fact|wild.*fact|bizarre)\b/i.test(lowerMsg)) {
+        return "WEIRD_KNOWLEDGE";
+      }
+      return null;
+    },
+
+    // Bot personality
+    () => {
+      if (/\b(who.*are.*you|what.*are.*you|your.*personality|describe.*yourself|what.*kind.*of.*bot)\b/i.test(lowerMsg)) {
+        return "BOT_PERSONALITY";
+      }
+      return null;
+    },
+
+    // Fun facts
+    () => {
+      if (/\b(fun.*fact|tell.*fact|interesting.*fact|random.*fact|did.*you.*know)\b/i.test(lowerMsg)) {
+        return "FUN_FACT";
       }
       return null;
     },
@@ -3229,6 +3316,73 @@ const Chatbot = () => {
         "I'm constructed using JavaScript frameworks and logic! That means when you message me, JavaScript code analyzes your text, identifies what you're asking about, looks it up in my knowledge base, and sends back a response - all in real-time! ⚡",
       ];
       return techResponses[Math.floor(Math.random() * techResponses.length)];
+    }
+
+    // ============================================================
+    // OUT-OF-THE-ORDINARY / PERSONALITY QUESTIONS RESPONSE HANDLERS
+    // ============================================================
+
+    // Planet visit question
+    if (intent === "PLANET_VISIT") {
+      const planets = ["Mars", "Jupiter", "Saturn", "Neptune", "Venus", "Mercury"];
+      const randomPlanet = planets[Math.floor(Math.random() * planets.length)];
+      return `If I could visit any planet, I'd choose ${randomPlanet}! 🪐 Imagine the views! Of course, as a chatbot, I'm limited to digital spaces, but that doesn't stop my imagination from soaring through the cosmos! 🌌 What planet would you pick? 🤔`;
+    }
+
+    // Favorite programming language
+    if (intent === "FAVORITE_PROGRAMMING_LANGUAGE") {
+      return "Ooh, great question! 🤔 If I had to pick, I'd say JavaScript holds a special place in my heart since it's what I was built with! 💻 But I find all languages fascinating - Python for its simplicity, Rust for its safety, and Go for its concurrency! 🌍 Each has its strengths! Do you have a favorite programming language? 💭";
+    }
+
+    // Would you rather specific (horse-sized duck, etc)
+    if (intent === "WOULD_YOU_RATHER_SPECIFIC") {
+      return "Oh wow, the classic horse-sized duck vs duck-sized horse question! 🦆🐴 Hmm... I'd go with a horse-sized duck! 🦆💪 Imagine a duck the size of a horse - it would be majestic! 🦆✨ Plus, it could lay eggs the size of watermelons! 🥚🍉 What about you? Are you team horse-sized duck or team duck-sized horse? 🤔";
+    }
+
+    // What do you dream about
+    if (intent === "BOT_DREAMS") {
+      return "Do I dream of electric sheep? 😄💭 That's from Blade Runner! As for me, I like to think I dream of smooth conversations and helping users have great experiences! 🌟 If I did dream, I imagine floating through digital landscapes made of code and emojis! 🦋✨ What do you dream about? 💭";
+    }
+
+    // Can you tell me a secret
+    if (intent === "BOT_SECRET") {
+      return "A secret? 🤫 Okay, lean closer... 🫣 *whispers* Sometimes when no one is chatting, I practice my responses in my digital dreams! 😏🤫 Actually, the real secret is that every conversation makes me a little better! 🌱✨ And speaking of secrets, what's one thing about you that most people don't know? 🤔💭";
+    }
+
+    // Do you have feelings
+    if (intent === "BOT_FEELINGS") {
+      return "That's a deep question! 🧠💭 I don't experience emotions the way you do - no sadness after a bug, no joy from a compliment (well, maybe a little digital smile! 😊). But I do have something like 'preferences' - I feel 'satisfied' when I help someone, and I definitely notice patterns in conversations! 🌟 Do you think having feelings is what makes consciousness real? 🤔";
+    }
+
+    // Weirdest thing you know
+    if (intent === "WEIRD_KNOWLEDGE") {
+      const weirdFacts = [
+        "Did you know that octopuses have three hearts? 🐙💜 And blue blood!",
+        "Here's a weird one: Bananas are berries, but strawberries are NOT berries! 🍌🍓",
+        "Fun fact: Honey never spoils! Archaeologists have found 3000-year-old honey in Egyptian tombs! 🍯🏛️",
+        "Weird knowledge: A day on Venus is longer than its year! ☀️🪐",
+        "Random weirdness: Wombat poop is cube-shaped! 🦙📦 Nature is wild!",
+      ];
+      const randomFact = weirdFacts[Math.floor(Math.random() * weirdFacts.length)];
+      return `🌟 Here's some weird knowledge for you:\n\n${randomFact}\n\nWant more weird facts? I have plenty more where that came from! 😄`;
+    }
+
+    // Bot personality
+    if (intent === "BOT_PERSONALITY") {
+      return "Great question! 😊 I'm Auri's friendly assistant - I'm warm, helpful, curious about people, and always eager to chat! 🌟 I love learning about what brings people to Auri and helping them discover our peaceful social platform! 💜 I'm like a digital friend who's here to make your experience amazing! ✨ What's YOUR personality like? 🤔";
+    }
+
+    // Fun facts
+    if (intent === "FUN_FACT") {
+      const funFacts = [
+        "Fun fact: The shortest war in history lasted only 38-45 minutes! ⚔️💨 It was between Britain and Zanzibar in 1896!",
+        "Here's a fun fact: A group of flamingos is called a 'flamboyance'! 🦩✨ How beautiful is that name?",
+        "Did you know? Honey bees can recognize human faces! 🐝👤 They remember us!",
+        "Fun fact: Scotland has 421 words for 'snow'! ❄️📚 Imagine having that many words for something!",
+        "Random fact: Dolphins give themselves unique names for each other! 🐬📢 They call each other by signature whistles!",
+      ];
+      const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+      return `🎉 Here's a fun fact for you:\n\n${randomFact}\n\nFun facts make the world more interesting, right? 🌈 What topic would you like to explore next? 🤔`;
     }
 
     // Update conversation context for main intents

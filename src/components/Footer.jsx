@@ -64,7 +64,7 @@ export const Footer = () => {
 
         {/* Navigation Links */}
         <div className="footer-section footer-nav">
-          <h4>Navigate</h4>
+          <h4>Menu</h4>
           <div className="footer-nav-links">
             <Link to="/" className="footer-link">Home</Link>
             <Link to="/community" className="footer-link">Community</Link>
@@ -73,17 +73,6 @@ export const Footer = () => {
             <Link to="/terms" className="footer-link">Terms</Link>
           </div>
         </div>
-
-        {/* Resources 
-        <div className="footer-section footer-resources">
-          <h4>Resources</h4>
-          <div className="footer-resources-links">
-            <Link to="/" className="footer-link">Help Center</Link>
-            <Link to="/terms" className="footer-link">FAQ</Link>
-            <Link to="/community" className="footer-link">Community Guidelines</Link>
-            <Link to="/reviews" className="footer-link">User Feedback</Link>
-          </div>
-        </div>*/}
       </div>
 
       {/* Footer Bottom */}
