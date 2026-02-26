@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageTextRenderer, EmojiImage } from "../components/EmojiRenderer";
+import "../styles/Chatbot.css";
 import {
   extractEmojiFromText,
   DEFAULT_EMOJI,
@@ -41,6 +42,17 @@ const INTENT_PRIORITY = {
   INNOXATION_WEBSITE: 85,
   CONTACT_INNOXATION: 85,
   CONTACT_JACOB: 85,
+  DESIGN_NEW_LOOK: 90,
+  DESIGN_GLASS: 85,
+  DESIGN_COLORS: 85,
+  DESIGN_LAYOUT: 80,
+  GREETING: 10,
+  GOODBYE: 10,
+  THANKS: 10,
+  AI_INFO: 85,
+  COMMUNITY_INFO: 85,
+  PRIVACY_DETAILED: 90,
+  WHAT_CAN_YOU_DO: 80,
 
   // High priority - Specific questions
   WHAT_IS_AURI: 80,
@@ -165,6 +177,87 @@ const detectIntent = (msg) => {
     // Only trigger for clear self-introductions, not random questions
     () => {
       if (
+        /\b(hello|hi|hey|greetings|sup|yo|good.*morning|good.*afternoon|good.*evening)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "GREETING";
+      }
+      return null;
+    },
+
+    // Goodbye
+    () => {
+      if (
+        /\b(bye|goodbye|see.*ya|later|farewell|gtg|brb)\b/i.test(lowerMsg)
+      ) {
+        return "GOODBYE";
+      }
+      return null;
+    },
+
+    // Thanks
+    () => {
+      if (
+        /\b(thanks|thank.*you|thx|appreciate.*it|grateful|ty)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "THANKS";
+      }
+      return null;
+    },
+
+    // AI / How it works
+    () => {
+      if (
+        /\b(ai|artificial.*intelligence|how.*you.*work|smart|brain|bot|machine.*learning|llm|engine)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "AI_INFO";
+      }
+      return null;
+    },
+
+    // Detailed Privacy
+    () => {
+      if (
+        /\b(data|privacy|tracking|ads|sell.*data|private|secure|encryption|encrypted|safety)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "PRIVACY_DETAILED";
+      }
+      return null;
+    },
+
+    // Community / Social
+    () => {
+      if (
+        /\b(community|people|friends|groups|social|connect|share|chat|reels|moments)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "COMMUNITY_INFO";
+      }
+      return null;
+    },
+
+    // What can you do
+    () => {
+      if (
+        /\b(what.*can.*you.*do|help|commands|features|capabilities|how.*can.*you.*help)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "WHAT_CAN_YOU_DO";
+      }
+      return null;
+    },
+
+    () => {
+      if (
         /\b(my.*name.*is|i.*am|i'm|call me|they call me|you can call me)\b/i.test(lowerMsg) &&
         /\b[a-zA-Z]+\b/.test(lowerMsg)
       ) {
@@ -185,7 +278,54 @@ const detectIntent = (msg) => {
       return null;
     },
 
-    // Play Store availability
+    () => {
+      if (
+        /\b(new.*look|redesign|new.*design|look.*different|changed|modern|update.*website|beautiful|pretty|clean|cool.*ui|smooth)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "DESIGN_NEW_LOOK";
+      }
+      return null;
+    },
+
+    // Glassmorphism / UI Style
+    () => {
+      if (
+        /\b(glass|blur|transparent|frost|glassmorphism|glow|shine|sleek|polished)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "DESIGN_GLASS";
+      }
+      return null;
+    },
+
+    // Colors / Palette
+    () => {
+      if (
+        /\b(color|palette|midnight|aurora|teal|blue|pink|purple|neon|gradient|dark.*theme|bright)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "DESIGN_COLORS";
+      }
+      return null;
+    },
+
+    // Layout / Navigation
+    () => {
+      if (
+        /\b(layout|navigation|nav|menu|bottom.*nav|floating|island|mobile.*nav|desktop.*nav)\b/i.test(
+          lowerMsg
+        )
+      ) {
+        return "DESIGN_LAYOUT";
+      }
+      return null;
+    },
+
+    // Web Store availability
     () => {
       if (
         /\b(play.*store|google.*play|playstore|on.*play.*store|available.*play.*store|on.*store)\b/i.test(
@@ -1665,7 +1805,7 @@ const responsePatterns = [
   {
     regex: /\b(how.*download|how.*get|how.*install)\b/i,
     responses: [
-      "Easy! 📱 Scroll down and click 'Download APK'! 😊",
+      "__DOWNLOAD_APK_DYNAMIC__",
       "Simple steps! 🌟 Check the download section below! 📱",
       "Just click download! ✨ Installation is straightforward!",
     ],
@@ -2140,10 +2280,10 @@ const responsePatterns = [
   {
     regex: /\b(how.*download|get.*app)\b/i,
     responses: [
-      "Scroll down and click 'Download APK'! 📱 Easy!",
-      "Download button below! ✨ One click away!",
-      "APK download simple! 😎 Get it now!",
-      "Download section awaits! 🌟 Grab your APK!",
+      "__DOWNLOAD_APK_DYNAMIC_1__",
+      "__DOWNLOAD_APK_DYNAMIC_2__",
+      "APK download is simple! 😎 One click away!",
+      "__DOWNLOAD_APK_DYNAMIC_3__",
     ],
   },
   {
@@ -3037,6 +3177,7 @@ const Chatbot = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [showUserMessage, setShowUserMessage] = useState(false);
   const [currentEmoji, setCurrentEmoji] = useState(null); // State for emoji above messages-container
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [conversationContext, setConversationContext] = useState({
     lastIntent: null,
     topic: null,
@@ -3049,6 +3190,13 @@ const Chatbot = () => {
     lastResponses: [],
   });
   const inputRef = useRef(null);
+
+  // Resize listener to track mobile state
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Welcome message on component mount
   useEffect(() => {
@@ -3063,6 +3211,33 @@ const Chatbot = () => {
       setMessages([welcomeMsg]);
     }
   }, [messages.length]);
+
+  const generateSmartFallback = (msg) => {
+    const lowerMsg = msg.toLowerCase();
+    
+    // Check for user interests in context
+    if (conversationContext.userInterests.length > 0) {
+      const interest = conversationContext.userInterests[conversationContext.userInterests.length - 1];
+      return `I noticed you're interested in ${interest}! 😊 Want to know how that fits into Auri's new Midnight & Aurora design?`;
+    }
+
+    // Question check
+    if (lowerMsg.includes("?")) {
+      return "That's a great question! 🤔 I'm not 100% sure about that specific detail, but I'd love to tell you more about Auri's features or our beautiful new redesign! What interests you most?";
+    }
+
+    // Length-based response
+    if (lowerMsg.length > 60) {
+      return "I appreciate the detailed message! ✨ It sounds like you're really exploring what Auri has to offer. How do you feel about our new look so far?";
+    }
+
+    // Name-based personalization
+    if (conversationContext.userName) {
+      return `I hear you, ${conversationContext.userName}! 😊 Is there anything specific about Auri's redesign or features I can clear up for you?`;
+    }
+
+    return "That's interesting! 😊 I'm always learning. Since we've just updated our look to the 'Midnight & Aurora' theme, I'd love to show you around! What would you like to see?";
+  };
 
   const generateResponse = (userMessage) => {
     // Apply fuzzy matching to handle typos
@@ -3090,7 +3265,21 @@ const Chatbot = () => {
       }
     }
 
+    // Update conversation context with current intent
+    if (intent) {
+      setConversationContext((prev) => ({
+        ...prev,
+        lastIntent: intent,
+      }));
+    }
+
     // Handle follow-up intents based on conversation context
+    if (conversationContext.lastIntent === "DESIGN_NEW_LOOK" || conversationContext.lastIntent === "DESIGN_GLASS" || conversationContext.lastIntent === "DESIGN_COLORS") {
+      if (/\b(app|application|mobile|download|also|will.*it|same)\b/i.test(lowerMsg)) {
+        return "Yes, exactly! 📱 The Auri app is the inspiration for this redesign. We've brought that same 'Midnight & Aurora' feel to the website so that everything feels consistent. When you download the app, you'll find the same beautiful glassmorphism, smooth gradients, and peaceful dark themes you see here! ✨";
+      }
+    }
+
     if (intent === "FOLLOW_UP_WHY" && conversationContext.lastIntent) {
       if (conversationContext.lastIntent === "IOS_INFO") {
         return "We're working hard to bring Auri to iOS! 📱 The main challenge is ensuring the same peaceful experience across different platforms. We're prioritizing Android first since that's where most of our early users are.";
@@ -3126,7 +3315,7 @@ const Chatbot = () => {
         return "Awesome! 🌟 Which feature sounds most interesting to you? The peaceful feeds, authentic reels, or maybe the creator marketplace?";
       }
       if (conversationContext.lastIntent === "DOWNLOAD_INFO") {
-        return "Perfect! 📱 Just scroll down and click the 'Download APK' button. It's completely safe and ready to install!";
+        return `Perfect! 📱 ${isMobile ? "Just click the 'Download APK' button right above me!" : "Just click the 'Download APK' button on the left side of your screen!"} It's completely safe and ready to install!`;
       }
     }
 
@@ -3143,6 +3332,56 @@ const Chatbot = () => {
     if (intent === "USER_NAME") {
       const name = extractedName || conversationContext.userName;
       return `Nice to meet you, ${name}! 😊 Thank you for sharing your name.`;
+    }
+
+    if (intent === "GREETING") {
+      const responses = [
+        "Hey there! 👋 How can I help you explore Auri today?",
+        "Hi! 😊 Great to see you! What's on your mind?",
+        "Hello! 🌿 Ready to discover a more peaceful social media?",
+        "Greetings! ✨ I'm here to answer anything about Auri!",
+      ];
+      return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    if (intent === "GOODBYE") {
+      return "Bye for now! 👋 Hope to see you on Auri soon! Stay peaceful! 🌿";
+    }
+
+    if (intent === "THANKS") {
+      return "You're very welcome! 😊 Happy to help! Is there anything else you'd like to know? ✨";
+    }
+
+    if (intent === "AI_INFO") {
+      return "I'm powered by Innoxation's custom AI engine! 🤖 Unlike other bots, I'm specifically designed to be helpful, peaceful, and expert on all things Auri. I use pattern recognition and context to understand you better! 🧠✨";
+    }
+
+    if (intent === "PRIVACY_DETAILED") {
+      return "Privacy is our core! 🔒 Auri uses end-to-end encryption for chats, meaning only you and the recipient can read them. We NEVER sell your data, we don't track you for ads, and we don't use your content to train AI. Your digital life stays YOURS. 🛡️✨";
+    }
+
+    if (intent === "COMMUNITY_INFO") {
+      return "The Auri community is all about authentic connection! 🤝 You can share 'Moments' (photos/videos), watch 'Reels', join groups that match your interests, and chat privately. It's a drama-free zone where real people share real lives. 🕊️📸";
+    }
+
+    if (intent === "WHAT_CAN_YOU_DO") {
+      return "I can do quite a bit! 🌟\n\n• Explain Auri's features & vision 🕊️\n• Tell you about our new 'Midnight & Aurora' design 🌌\n• Help with download/install info 📱\n• Answer questions about privacy & AI 🔒\n• Chat about gaming, coding, or even tell a joke! 🎮\n\nWhat would you like to dive into? 😊";
+    }
+
+    if (intent === "DESIGN_NEW_LOOK") {
+      return "Do you like it? 😊 We've completely redesigned Auri with a modern, sleek aesthetic called 'Midnight & Aurora'! It's designed to be peaceful but vibrant, using smooth glassmorphism and beautiful gradients. We wanted the website to feel as premium and calm as the app itself! ✨";
+    }
+
+    if (intent === "DESIGN_GLASS") {
+      return "That's our new glassmorphism style! 💎 We use background blurs, subtle borders, and soft shadows to create that 'frosted glass' look. It's part of our commitment to a clean, modern, and distraction-free experience. Smooth, right? ✨";
+    }
+
+    if (intent === "DESIGN_COLORS") {
+      return "We're using the 'Midnight & Aurora' palette! 🌌 The deep 'Midnight' backgrounds provide a calm base, while the 'Aurora' colors—Teal, Blue, Pink, and Purple—add that magical, vibrant energy. It's meant to look like the night sky! 🌠";
+    }
+
+    if (intent === "DESIGN_LAYOUT") {
+      return "We've modernized the layout for better navigation! 🧭 On desktop, you'll see our new 'floating island' nav bar, and on mobile, we've added a handy bottom navigation for easy thumb access. It's all about making your experience as smooth as possible! 📱✨";
     }
 
     // Handle Play Store availability
@@ -3473,7 +3712,7 @@ const Chatbot = () => {
     }
 
     if (intent === "DOWNLOAD_INFO") {
-      return "Easy! 📱 Scroll down below and click the 'Download APK' button. It's a simple one-click download for Android users!";
+      return `Easy! 📱 ${isMobile ? "The 'Download APK' button is right above me!" : "Just click the 'Download APK' button to the left!"} It's a simple one-click download for Android users!`;
     }
 
     if (intent === "SAFETY_INFO") {
@@ -3725,19 +3964,28 @@ const Chatbot = () => {
             Math.floor(Math.random() * selectedPattern.responses.length)
           ];
       }
+      
+      // Handle dynamic placeholders for isMobile
+      if (typeof response === "string") {
+        if (response.includes("__DOWNLOAD_APK_DYNAMIC__")) {
+          response = response.replace("__DOWNLOAD_APK_DYNAMIC__", isMobile ? "You can get Auri by clicking 'Download APK' right above me! 📱" : "Easy! 📱 Just click 'Download APK' to the left of this chat! 😊");
+        }
+        if (response.includes("__DOWNLOAD_APK_DYNAMIC_1__")) {
+          response = response.replace("__DOWNLOAD_APK_DYNAMIC_1__", isMobile ? "You can find the 'Download APK' button right above me! 📱" : "Just look to the left! 👈 You'll see 'Launch App' and 'Download APK' right there.");
+        }
+        if (response.includes("__DOWNLOAD_APK_DYNAMIC_2__")) {
+          response = response.replace("__DOWNLOAD_APK_DYNAMIC_2__", isMobile ? "Click 'Download APK' just above this chat! ✨" : "The download buttons are right on the left side of your screen! 🌟");
+        }
+        if (response.includes("__DOWNLOAD_APK_DYNAMIC_3__")) {
+          response = response.replace("__DOWNLOAD_APK_DYNAMIC_3__", isMobile ? "Download section is right above! 📱" : "The 'Download APK' button is just to the left of me! 👈");
+        }
+      }
+      
       return response;
     }
 
     // Smart fallback based on message characteristics
-    if (lowerMsg.includes("?")) {
-      return "Great question! 🤔 I'm here to help with anything Auri-related. What specifically would you like to know?";
-    } else if (lowerMsg.length > 50) {
-      return "That's quite detailed! 📝 I appreciate you sharing. How can I assist with your Auri experience?";
-    } else if (lowerMsg.includes("feel") || lowerMsg.includes("think")) {
-      return "Interesting perspective! 😊 Tell me more about how you're feeling about Auri.";
-    } else {
-      return "I'm here to chat about Auri! 💬 What would you like to know about our peaceful social platform?";
-    }
+    return generateSmartFallback(correctedMessage);
   };
 
   const sendMessage = async () => {
@@ -3773,10 +4021,17 @@ const Chatbot = () => {
     }
   };
 
-  // Get the latest message to display
-  const latestMessage = messages[messages.length - 1];
-  const shouldShowMessage =
-    latestMessage && (!showUserMessage || latestMessage.type === "user");
+  const messagesContainerRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
   return (
     <motion.div
@@ -3785,50 +4040,43 @@ const Chatbot = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {currentEmoji && (
-        <motion.div
-          className="emoji-above-messages"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          style={{
-            position: 'absolute',
-            top: '-60px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 10,
-            fontSize: '48px',
-            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
-          }}
-        >
-          <EmojiImage emojiName={currentEmoji} size={100} />
-        </motion.div>
-      )}
-      <div className="messages-container">
+      <div className="chatbot-header">
         <AnimatePresence mode="wait">
-          {shouldShowMessage && (
+          {currentEmoji && (
             <motion.div
-              key={latestMessage.id}
-              className={`message ${latestMessage.type}`}
-              initial={{ y: 50, opacity: 0, rotate: -5, scale: 0.9 }}
-              animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ y: -50, opacity: 0, rotate: 5, scale: 0.9 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              key={currentEmoji}
+              className="emoji-header-wrapper"
+              initial={{ scale: 0, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0, opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <MessageTextRenderer
-                text={latestMessage.text}
-                className="message-text"
-              />
+              <EmojiImage emojiName={currentEmoji} size={80} />
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      <div className="messages-container" ref={messagesContainerRef}>
+        {messages.map((message) => (
+          <motion.div
+            key={message.id}
+            className={`message ${message.type}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MessageTextRenderer
+              text={message.text}
+              className="message-text"
+            />
+          </motion.div>
+        ))}
         {isTyping && (
           <motion.div
             className="message bot typing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           >
             <div className="typing-indicator">
               <span></span>
@@ -3838,6 +4086,7 @@ const Chatbot = () => {
           </motion.div>
         )}
       </div>
+
       <div className="input-container">
         <input
           ref={inputRef}

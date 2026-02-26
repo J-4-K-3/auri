@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiChevronDown,
-  FiChevronUp,
   FiFileText,
   FiShield,
   FiLock,
@@ -18,24 +17,23 @@ const sectionsData = [
     content: (
       <>
         <p>
-          This summary provides an overview of Auri's key policies and
-          practices. Users must create an account to access the platform. They
-          are responsible for maintaining secure login credentials and may
-          request account deletion at any time. The community guidelines cover
-          content creation, interaction, and moderation, including restrictions
-          on harmful or inappropriate content and the use of AI and human
-          moderation to maintain safety. Auri may connect with other Innoxation
-          apps for optional features, but user data is handled carefully,
-          collected only as necessary, and never sold to third parties. Security
-          measures, data retention practices, and protections for younger users
-          are in place, and users have rights to access, correct, or delete
-          their data. Third-party services are used only for specific functions
-          like Auri Shop item management, payment processing, and delivery. The
-          platform may receive updates or changes, and support is available for
-          questions regarding account management, content, or privacy. Expand
-          the sections below for complete details.
+          Welcome to Auri. This summary provides a warm overview of our commitment to your privacy and safety. 
+          Auri is a community-driven platform where you can connect, share media, and even run your own shop. 
+          We believe in complete transparency: your data is yours, your messages are private, and we never use 
+          your content to train AI models. Whether you're exploring the feed, discovering hidden easter eggs, 
+          or selling unique items in the shop, we prioritize a secure and respectful environment for everyone.
         </p>{" "}
         <br />
+        <h4>Quick Highlights:</h4>
+        <ul>
+          <li><strong>Direct User Shop:</strong> List your own items, keep 100% of the profit, and enjoy a safe marketplace where every item is human-vetted.</li>
+          <li><strong>Privacy First:</strong> Your messages are end-to-end encrypted and your content is never shared or used to train AI.</li>
+          <li><strong>Proactive Safety:</strong> Smart filtering protects all age groups from inappropriate content while maintaining a warm community.</li>
+          <li><strong>Full Data Control:</strong> Whether it's easy account recovery or permanent data deletion, you are always in charge of your information.</li>
+          <li><strong>Safe Discoveries:</strong> Explore fun, non-malicious easter eggs hidden throughout the platform for a more engaging experience.</li>
+          <br />
+          <li><strong>Section Summary:</strong> Auri is a transparent, community-focused platform where your data and privacy are protected, offering a secure marketplace and encrypted social experience.</li>
+        </ul>
       </>
     ),
   },
@@ -52,74 +50,82 @@ const sectionsData = [
         <h4>1. Accounts & Access</h4>
         <ul>
           <li>
-            Users must create an account to use Auri; guest access is not
-            available.
+            Users must create an account to experience the full Auri community.
           </li>
           <li>
-            Users may request permanent deletion of their account and associated
-            data at any time.
+            Forgetting credentials? We've made recovery easy and straightforward with instructions directly 
+            on the login screen.
           </li>
           <li>
-            Users are responsible for keeping their login credentials secure.
+            If you choose to leave, you can request permanent deletion of your account and data at any time. 
+            Otherwise, your activity remains saved so you can pick up where you left off.
           </li>
+          <li><strong>Summary:</strong> Creating an account is required for full access, with simple recovery options and the right to permanent data deletion.</li>
         </ul>{" "}
         <br />
-        <h4>2. Content & Interaction</h4>
+        <h4>2. The Auri Shop (User-to-User)</h4>
         <ul>
           <li>
-            Users may post images, media, links, and text. Text posts must
-            include at least one image.
-          </li>
-          <li>Users may edit or delete their own content at any time.</li>
-          <li>
-            Content must not contain pornography, nudity, extreme violence, hate
-            speech, threats, or illegal activity.
+            Items in the Auri Shop are sold directly by users, not third parties. Any user can opt to become 
+            a seller, provided they follow our safety rules on allowed items.
           </li>
           <li>
-            Age-based filtering helps ensure younger users do not see sensitive
-            content.
+            <strong>Profit & Payments:</strong> Sellers keep 100% of their profits. Payments go directly to 
+            the seller. Because Auri does not process the payment directly, refunds and returns are managed 
+            between the buyer and seller, though we are here to help if disputes arise.
           </li>
           <li>
-            Users may report inappropriate content, which is reviewed by AI
-            systems and human moderators.
+            <strong>Safety First:</strong> Every item is thoroughly reviewed by our team before it is 
+            published to prevent fraudulent activity and ensure community quality.
           </li>
+          <li><strong>Summary:</strong> A peer-to-peer marketplace where sellers keep all profits, and every listing is manually vetted for safety and quality.</li>
         </ul>{" "}
         <br />
-        <h4>3. Moderation & Safety</h4>
-        <p>
-          Auri uses automated systems and human moderation to keep the community
-          safe. Content that violates guidelines may result in removal,
-          warnings, or suspension. Severe violations may be escalated to
-          authorities when required.
-        </p>{" "}
+        <h4>3. Content & Community</h4>
+        <ul>
+          <li>
+            Share your stories, reels, and moments. Content is checked upon publishing to ensure it meets 
+            our standards—no NSFW, aggressive wording, or harmful material.
+          </li>
+          <li>
+            <strong>Chat Safety:</strong> All messaging is end-to-end encrypted. Your private conversations 
+            are just that—private. They are never leaked or used for any other purpose.
+          </li>
+          <li>
+            <strong>Easter Eggs:</strong> You might stumble upon hidden surprises (easter eggs). These are 
+            placed for your enjoyment and are entirely safe and non-malicious.
+          </li>
+          <li><strong>Summary:</strong> Shared content is moderated for safety, private chats are fully encrypted, and hidden features are strictly for fun and safe.</li>
+        </ul>{" "}
         <br />
-        <h4>4. Feature Syncing</h4>
+        <h4>4. Our Use of AI</h4>
         <p>
-          Auri may connect with other Innoxation apps to access additional
-          features. Syncing is optional and only used for features that rely on
-          cross-app functionality.
+          We use AI as a protective shield, not a data harvester. AI helps us filter out inappropriate 
+          content and protect younger users. <strong>Important:</strong> We do not use your personal 
+          content, media, or messages to train our AI models, even with consent.
         </p>{" "}
+        <ul>
+          <li><strong>Summary:</strong> AI is used exclusively for content moderation and safety, never for training models with user data.</li>
+        </ul>
         <br />
-        <h4>5. Liability & Responsibility</h4>
+        <h4>5. Liability & Disputes</h4>
         <p>
-          Users are responsible for the content they post. Innoxation Tech Inc
-          moderates the platform but is not liable for individual user content.
-          Illegal or harmful content is prohibited and may be reported to law
-          enforcement if necessary.
+          While we vet shop items and moderate content, users are responsible for their interactions. 
+          In cases of disputes, we notify both parties and take appropriate action to maintain platform 
+          integrity.
         </p>{" "}
+        <ul>
+          <li><strong>Summary:</strong> Users are responsible for their interactions, but Auri provides mediation and takes action to ensure platform safety.</li>
+        </ul>
         <br />
-        <h4>6. Updates & Changes</h4>
+        <h4>6. Contact & Support</h4>
         <p>
-          Auri may release updates or bug fixes that improve performance or
-          stability. Users will be notified if any update requires manual
-          installation.
-        </p>{" "}
-        <br />
-        <h4>7. Contact</h4>
-        <p>
-          For questions or concerns:{" "}
-          <a href="mailto:innoxation.tech@gmail.com">support@innoxation.com</a>
+          Our team is here to support you. For any questions regarding the shop, your account, or general 
+          help: <a href="mailto:innoxation.tech@gmail.com">support@innoxation.com</a>
         </p>
+        <ul>
+          <li><strong>Overall Terms Summary:</strong> These terms establish a safe environment where users control their accounts, trade directly with vetting, and enjoy private, moderated social interactions.</li>
+        </ul>
       </>
     ),
   },
@@ -133,165 +139,229 @@ const sectionsData = [
           <strong>Effective Date:</strong> December 2, 2025
         </p>{" "}
         <br />
-        <h4>Overview</h4>
+        <h4>Our Privacy Promise</h4>
         <p>
-          Your privacy matters. Auri collects only the information necessary to
-          operate the platform and maintain a safe environment.
+          Your privacy is at the heart of everything we build. We collect only what is 
+          essential to provide you with a safe, functional, and delightful experience.
         </p>{" "}
         <br />
         <h4>1. Information We Collect</h4>
         <ul>
           <li>
-            <strong>Account Data:</strong> Email, name, age, and location.
+            <strong>Account Details:</strong> Basic info like email, name, age, and location 
+            needed to set up your profile.
           </li>
           <li>
-            <strong>Optional User Inputs:</strong> Reviews, feedback, and user
-            reports you choose to submit.
+            <strong>Your Contributions:</strong> Reviews, feedback, and reports you 
+            voluntarily submit to help improve the community.
           </li>
-        </ul>{" "}
-        <br />
-        <h4>2. How We Use Data</h4>
-        <p>Your data is used to:</p>
-        <ul>
-          <li>Provide core app functionality</li>
           <li>
-            Maintain age-appropriate content filtering and safety features
+            <strong>Private Conversations:</strong> While we store your messages so you can 
+            access them, they are end-to-end encrypted. We cannot read them, and they are 
+            not shared with anyone.
           </li>
-          <li>Process user reports and community moderation</li>
-          <li>Communicate updates or policy changes when necessary</li>
-          <li>Support optional cross-app features within Innoxation apps</li>
+          <li><strong>Summary:</strong> We collect essential account data and voluntary feedback, and store encrypted private messages that only you can read.</li>
         </ul>{" "}
         <br />
-        <h4>3. Sharing & Disclosure</h4>
+        <h4>2. How We Handle Your Data</h4>
         <ul>
           <li>
-            Auri does <strong>not</strong> sell user data.
+            <strong>No AI Training:</strong> We pride ourselves on the fact that your 
+            content, images, and personal data are never used to train AI models.
           </li>
           <li>
-            Data is only shared within Innoxation systems when syncing features
-            (optional).
+            <strong>Safety & Filtering:</strong> AI is used strictly to filter out harmful 
+            content (NSFW, verbal abuse) and to maintain age-appropriate environments.
           </li>
           <li>
-            Third-party services are used <strong>only</strong> for Auri Shop
-            items, item tracking, and checkout purposes.
+            <strong>No Leaks:</strong> User content is not shared with platform owners 
+            or third parties for any marketing or training purposes.
           </li>
-          <li>No other part of Auri uses third-party data processors.</li>
+          <li><strong>Summary:</strong> Your data is used strictly for platform safety and moderation, never for AI training or third-party marketing.</li>
         </ul>{" "}
         <br />
-        <h4>4. Security</h4>
+        <h4>3. The User Shop & Third Parties</h4>
+        <ul>
+          <li>
+            We do <strong>not</strong> sell your data to anyone.
+          </li>
+          <li>
+            Third-party services are used <strong>only</strong> for necessary shop 
+            logistics, such as managing item listings, tracking deliveries, or 
+            digital item fulfillment. These providers only receive the specific info 
+            required to complete your transaction.
+          </li>
+          <li><strong>Summary:</strong> We never sell data, and third-party involvement is limited to essential shop logistics and fulfillment.</li>
+        </ul>{" "}
+        <br />
+        <h4>4. Your Rights & Control</h4>
+        <ul>
+          <li>
+            <strong>Easy Deletion:</strong> You can request full deletion of your account 
+            and all associated data whenever you wish.
+          </li>
+          <li>
+            <strong>Data Access:</strong> You have the right to see, correct, or 
+            withdraw consent for any optional features you've enabled.
+          </li>
+          <li>
+            <strong>Secure Retention:</strong> If you simply log out, we keep your data 
+            safely encrypted so your activities are ready for you when you return.
+          </li>
+          <li><strong>Summary:</strong> You have complete control over your data, with options to delete, access, or securely store your information.</li>
+        </ul>{" "}
+        <br />
+        <h4>5. Protecting Younger Users</h4>
         <p>
-          Data is encrypted and stored securely. Users are responsible for
-          protecting their login credentials.
+          Auri is designed for users aged 8 and up. Our proactive moderation and AI-driven 
+          filtering are specifically tuned to keep the environment safe for younger 
+          members of our community.
         </p>{" "}
-        <br />
-        <h4>5. Children’s Privacy</h4>
-        <p>
-          Auri is suitable for users aged 8 and above. Content filtering and
-          moderation help protect younger users. Parents or guardians may
-          request account deletion at any time.
-        </p>{" "}
-        <br />
-        <h4>6. Data Retention</h4>
-        <p>
-          We retain data for as long as the account is active. Users may request
-          full deletion of their account and data.
-        </p>{" "}
-        <br />
-        <h4>7. User Rights</h4>
         <ul>
-          <li>Request access to their stored information</li>
-          <li>Request corrections to inaccurate data</li>
-          <li>Request deletion of their data</li>
-          <li>Withdraw consent for optional features</li>
-        </ul>{" "}
-        <br />
-        <h4>8. Third-Party Services</h4>
-        <p>Third-party providers are used only for:</p>
-        <ul>
-          <li>Auri Shop item management</li>
-          <li>Shipping or digital item delivery</li>
-          <li>Payment processing or checkout</li>
+          <li><strong>Summary:</strong> Specialized safety measures are in place to ensure a protected environment for users aged 8 and above.</li>
         </ul>
-        <p>
-          These providers receive only the information required to complete the
-          transaction. Auri does not use cookies or third-party trackers.
-        </p>{" "}
         <br />
-        <h4>9. Changes to This Policy</h4>
+        <h4>6. Contact Us</h4>
         <p>
-          Policy updates may occur occasionally. The latest version will always
-          be available in the app and website.
-        </p>{" "}
-        <br />
-        <h4>10. Contact</h4>
-        <p>
-          For privacy questions:{" "}
+          For any privacy-related inquiries:{" "}
           <a href="mailto:innoxation.tech@gmail.com">
             innoxation.tech@gmail.com
           </a>
         </p>
+        <ul>
+          <li><strong>Overall Privacy Summary:</strong> Auri’s privacy model is built on zero data harvesting, full encryption, and user-led data control to ensure absolute digital safety.</li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: "seller_portal",
+    title: "Seller Portal Operations",
+    icon: <FiCheckCircle />,
+    content: (
+      <>
+        <p>
+          <strong>Seller Mini Guidelines</strong>
+        </p>{" "}
+        <br />
+        <h4>1. Seller Onboarding</h4>
+        <ul>
+          <li>
+            To list items, you must identify as a Freelancer, Creator, Designer, Student, or Digital Reseller.
+          </li>
+          <li>
+            Sellers must provide their experience level and delivery capabilities during setup.
+          </li>
+          <li>
+            By completing onboarding, you agree to sell only verified digital goods and ensure all 
+            listings are human-reviewed.
+          </li>
+          <li><strong>Summary:</strong> Sellers must undergo a specific onboarding process, classifying their business type and committing to quality digital standards.</li>
+        </ul>{" "}
+        <br />
+        <h4>2. Allowed Digital Goods</h4>
+        <ul>
+          <li>
+            <strong>Digital Credits:</strong> Mobile data, eSIMs, and gaming credits (Roblox, MLBB, etc.).
+          </li>
+          <li>
+            <strong>Gift Cards:</strong> Legitimate App Store and gaming service gift cards.
+          </li>
+          <li>
+            <strong>Digital Services:</strong> Design (UI/UX, Logos, Branding), Resume Creation, and Social Media assets.
+          </li>
+          <li>
+            <strong>No Physical Shipping:</strong> No items requiring physical shipment are permitted in the Seller Mini portal.
+          </li>
+          <li><strong>Summary:</strong> Permitted items are strictly digital, covering credits, cards, and professional services, with a total ban on physical shipping.</li>
+        </ul>{" "}
+        <br />
+        <h4>3. Payment & Fulfillment</h4>
+        <ul>
+          <li>
+            Sellers must provide valid payment links or QR codes (GCash, Venmo, Cash App).
+          </li>
+          <li>
+            Sellers are strictly responsible for manually confirming payment received to trigger order fulfillment.
+          </li>
+          <li>
+            Auri acts as a bridge; we do not process funds and are not responsible for the validity of seller-provided links.
+          </li>
+          <li><strong>Summary:</strong> Sellers manage their own payment methods and are responsible for manual fulfillment once funds are verified.</li>
+        </ul>{" "}
+        <br />
+        <h4>4. Platform Features</h4>
+        <ul>
+          <li>
+            <strong>VIP Membership:</strong> Advanced analytics and priority support for high-performing sellers.
+          </li>
+          <li>
+            <strong>Vetting:</strong> Every digital listing undergoes human review before activation.
+          </li>
+          <li><strong>Summary:</strong> We provide growth tools and human oversight to maintain a high-quality marketplace for all digital services.</li>
+        </ul>
       </>
     ),
   },
 ];
 
 export const Terms = () => {
-  const navigate = useNavigate();
-  const [openId, setOpenId] = useState("");
-
-  const toggle = (id) => setOpenId((prev) => (prev === id ? "" : id));
+  const [activeId, setActiveId] = useState("summary");
 
   return (
-    <div className="terms-container">
-      <div className="progress-container">
-        <div className="progress-bar"></div>
-      </div>
-
+    <motion.div
+      className="terms-container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <div className="terms-content">
         <div className="terms-header">
-          <h1>Legal Documents</h1>
-          <p>
-            This page contains Auri's Terms & Conditions and Privacy Policy,
-            effective December 2 2025. It outlines rules for account usage,
-            content posting, community moderation, data collection and usage,
-            optional cross-app features and ways to contact support. Expand each
-            section for full details.
+          <h1 className="terms-title">Community & <span className="gradient-text">Privacy</span></h1>
+          <p className="terms-subtitle">
+            Welcome to the heart of Auri's commitment to you. These documents, 
+            effective December 2, 2025, outline how we protect your privacy, 
+            the rules for our community-driven shop, and how we keep our platform 
+            safe and free from data harvesting. We believe in a community built 
+            on trust, where your content and messages remain yours alone. 
+            Expand each section below to learn more about our practices.
           </p>
         </div>
 
-        <div className="accordion">
-          {sectionsData.map((s, index) => (
-            <div
-              className={`accordion-item ${openId === s.id ? "active" : ""}`}
-              key={s.id}
-            >
-              <div className="section-indicator"></div>
+        <div className="sections-list">
+          {sectionsData.map((section) => (
+            <div key={section.id} className="section-wrapper">
               <button
-                className="accordion-header"
-                onClick={() => toggle(s.id)}
-                aria-expanded={openId === s.id}
+                className={`section-header ${activeId === section.id ? 'active' : ''}`}
+                onClick={() => setActiveId(activeId === section.id ? null : section.id)}
               >
-                <div className="accordion-header-content">
-                  <div className="accordion-icon-wrapper">{s.icon}</div>
-                  <span className="accordion-title">{s.title}</span>
+                <div className="section-header-title">
+                  <span className="section-icon">{section.icon}</span>
+                  <p style={{ color: 'white' }}>{section.title}</p>
                 </div>
-                <span className="accordion-icon">
-                  {openId === s.id ? <FiChevronUp /> : <FiChevronDown />}
-                </span>
+                <motion.div
+                  animate={{ rotate: activeId === section.id ? 180 : 0 }}
+                >
+                  <FiChevronDown />
+                </motion.div>
               </button>
-
-              <div
-                className={`accordion-content ${openId === s.id ? "open" : ""}`}
-                aria-hidden={openId !== s.id}
-              >
-                <div className="accordion-inner">{s.content}</div>
-              </div>
+              
+              <AnimatePresence>
+                {activeId === section.id && (
+                  <motion.div
+                    className="section-content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {section.content}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
-
-export default Terms;

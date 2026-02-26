@@ -1,47 +1,65 @@
 .dm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(6, 8, 12, 0.6);
+  background: rgba(6, 8, 12, 0.8);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000;
   padding: 20px;
 }
 
 .dm-modal {
-  max-width: 640px;
+  max-width: 500px;
   width: 100%;
-  background: linear-gradient(180deg, var(--slate700), #151823);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-  color: var(--white);
-  border: 1px solid rgba(255, 138, 101, 0.06);
+  background: var(--bg-secondary);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: var(--shadow-xl);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.dm-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--aurora-blue), var(--aurora-teal));
 }
 
 .dm-modal h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 .dm-message {
-  font-size: 14px;
-  color: var(--white);
+  font-size: 15px;
+  color: var(--text-secondary);
   line-height: 1.6;
-  white-space: pre-line;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .dm-quote {
-  background: rgba(255, 255, 255, 0.02);
-  border-left: 3px solid rgba(255, 138, 101, 0.14);
-  padding: 12px 14px;
-  border-radius: 8px;
-  color: var(--white);
-  font-size: 14px;
+  background: var(--bg-tertiary);
+  border-left: 4px solid var(--aurora-teal);
+  padding: 16px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 15px;
   line-height: 1.5;
-  margin-bottom: 14px;
+  margin-bottom: 24px;
+}
+
+.dm-quote strong {
+  color: var(--aurora-teal);
 }
 
 .dm-actions {
@@ -51,22 +69,36 @@
 }
 
 .dm-btn {
-  padding: 10px 14px;
-  border-radius: 10px;
+  padding: 12px 24px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 15px;
 }
 
 .dm-cancel {
   background: transparent;
-  color: var(--white);
-  border: 1px solid rgba(233, 236, 244, 0.04);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.dm-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
 }
 
 .dm-confirm {
-  background: linear-gradient(135deg, #FF8A65, #F76E8E);
-  color: var(--white);
+  background: linear-gradient(135deg, var(--aurora-blue), var(--aurora-teal));
+  color: #FFFFFF;
   border: none;
+  box-shadow: 0 4px 12px var(--aurora-blue-glow);
+}
+
+.dm-confirm:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px var(--aurora-blue-glow);
 }
 
 @media (max-width: 480px) {

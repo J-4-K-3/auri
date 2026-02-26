@@ -13,7 +13,6 @@ import { Terms } from './components/Terms';
 import { Footer } from './components/Footer';
 import { Navigation } from './components/Navigation';
 import { ThemeProvider } from './theme/ThemeContext';
-import { ThemeSwitcherPopup } from './components/ThemeSwitcherPopup';
 
 import { databases, APPWRITE_DATABASE_ID, IDs, COLLECTION_TRACKER_ID } from './lib/Appwrite';
 import './styles/globals.css';
@@ -37,8 +36,6 @@ function AppLayout() {
         </Routes>
       </main>
       <Footer />
-      {/* Theme switcher popup appears on all pages */}
-      <ThemeSwitcherPopup />
     </div>
   );
 }

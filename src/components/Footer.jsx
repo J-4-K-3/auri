@@ -1,95 +1,61 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaTiktok, FaEnvelope, FaHeart, FaDiscord } from "react-icons/fa";
-import { SurveyPopup } from './SurveyPopup';
+import { FaTiktok, FaEnvelope, FaHeart } from "react-icons/fa";
 import '../styles/Footer.css';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [surveyOpen, setSurveyOpen] = useState(false);
 
   return (
     <footer className="footer">
-      {/* Survey Section 
-      <div className="survey-section">
-        <div className="survey-container">
-          <p className="survey-text">
-            Help us improve Auri! Spend just 1 minute answering 5 quick questions and get $2 transferred to your PayPal as a thank you.
-          </p>
-          <button className="survey-button" onClick={() => setSurveyOpen(true)}>
-            Take Survey & Earn $2
-          </button>
-        </div>
-      </div>*/}
       <div className="footer-content">
-        {/* Logo and Brand Section */}
         <div className="footer-section footer-brand">
           <img src="/auri_logo.png" alt="Auri Logo" className="footer-logo" />
           <p className="footer-tagline">A calm place to share your world</p>
           <p className="footer-mission">Building peaceful social connections</p>
         </div>
 
-        {/* Company Info */}
-        <div className="footer-section footer-company">
+        <div className="footer-section">
           <h4>Company</h4>
-          <div className="company-info">
-            <p className="company-name">Innoxation Tech Inc</p>
-            <p className="copyright">&copy; {currentYear} All rights reserved.</p>
-            <p className="footer-meta">Version 2.0</p>
+          <div className="footer-nav-links">
+            <p>Innoxation Tech Inc</p>
+            <p>Version 2.0</p>
+            <p>&copy; {currentYear}</p>
           </div>
         </div>
 
-        {/* Social Media & Community */}
-        <div className="footer-section footer-social">
-          <h4>Connect With Us</h4>
+        <div className="footer-section">
+          <h4>Connect</h4>
           <div className="social-links">
-            <a href="https://tiktok.com/@auri_plat_form" target="_blank" rel="noopener noreferrer" className="social-link">
-              <FaTiktok size={20} />
-              <span>TikTok</span>
-            </a>
-            <a href="https://apkpure.com/p/com.jake285.Auri#google_vignette" target="_blank" rel="noopener noreferrer" className="social-link">
-              <img src="/auri_logo.png" alt="Auri Logo" width="20" height="20" style={{ borderRadius: 10 }} />
-              <span>Auri</span>
-            </a>
-            <a target="_blank" rel="noopener noreferrer" className="social-link" style={{ opacity: 0.5 }}>
-              <FaDiscord size={20} />
-              <span>Discord - coming soon</span>
+            <a href="https://www.tiktok.com/@auri_platform_" target="_blank" rel="noopener noreferrer" className="social-link">
+              <FaTiktok /> TikTok
             </a>
             <a href="mailto:innoxation.tech@gmail.com" className="social-link">
-              <FaEnvelope size={20} />
-              <span>Email Us</span>
+              <FaEnvelope /> Email Us
             </a>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="footer-section footer-nav">
+        <div className="footer-section">
           <h4>Menu</h4>
           <div className="footer-nav-links">
             <Link to="/" className="footer-link">Home</Link>
             <Link to="/community" className="footer-link">Community</Link>
             <Link to="/support" className="footer-link">Support</Link>
             <Link to="/reviews" className="footer-link">Reviews</Link>
-            <Link to="/terms" className="footer-link">Terms</Link>
+            <Link to="/terms" className="footer-link">Legal</Link>
           </div>
         </div>
       </div>
 
-      {/* Footer Bottom */}
       <div className="footer-bottom">
-        <div className="footer-bottom-content">
-          <p className="footer-made-with">
-            Made with <FaHeart className="heart-icon" /> for peaceful connections
-          </p>
-          <div className="footer-bottom-links">
-            <Link to="/terms" className="footer-bottom-link">Privacy Policy</Link>
-            <Link to="/terms" className="footer-bottom-link">Terms of Service</Link>
-            <span className="footer-bottom-separator">•</span>
-            <span className="footer-build-info">Built for calm communities</span>
-          </div>
+        <p>Made with <FaHeart className="heart-icon" /> for peaceful connections</p>
+        <div className="footer-bottom-links">
+          <Link to="/terms">Privacy</Link>
+          <span style={{ margin: '0 8px' }}>•</span>
+          <Link to="/terms">Terms</Link>
         </div>
       </div>
-      <SurveyPopup isOpen={surveyOpen} onClose={() => setSurveyOpen(false)} />
     </footer>
   );
 };

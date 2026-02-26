@@ -80,12 +80,11 @@ export const NameInputModal = ({ isOpen, onClose, onSave }) => {
             <p>
               Welcome to Auri Community! This is your peaceful space to connect, share, and discover. 
               Drop a message (even a simple "hi"), try our beautiful emojis, and see how Auri and 
-              the community create meaningful conversations together. Every interaction helps shape 
-              a calm digital space where authentic connections can grow. 💫
+              the community create meaningful conversations together.
             </p>
             <p className="name-modal-hint">
               To join our community conversation, please tell us your name. 
-              This helps other members know who's sharing their thoughts.
+              This helps other members know who's sharing their thoughts. PS sometimes you might need to refresh the page to see new messages.
             </p>
 
             <form onSubmit={handleSubmit} className="name-form">
